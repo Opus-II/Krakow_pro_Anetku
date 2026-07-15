@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#701f3b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Kraków pro Anetku">
+  <title>Kraków pro Anetku ❤️</title>
+  <style>
+    :root {
+      --bg: #fff8f3;
+      --paper: rgba(255, 253, 250, .96);
+      --paper-strong: #fffdf9;
+      --ink: #30212a;
+      --muted: #77636d;
+      --wine: #701f3b;
+      --wine-dark: #491326;
+      --rose: #c94f72;
+      --rose-light: #f9dce5;
+      --blush: #fff0f3;
+      --gold: #c89543;
+      --gold-light: #f7ecd7;
+      --green: #287b55;
+      --green-light: #e8f6ee;
+      --spice: #b33a24;
+      --spice-dark: #6f1d16;
+      --spice-light: #fff0eb;
+      --border: rgba(112, 31, 59, .15);
+      --shadow: 0 12px 32px rgba(73, 19, 38, .11);
+      --shadow-soft: 0 6px 18px rgba(73, 19, 38, .08);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+      background:
+        radial-gradient(circle at 10% -5%, rgba(201, 79, 114, .22), transparent 34rem),
+        radial-gradient(circle at 96% 16%, rgba(200, 149, 67, .17), transparent 28rem),
+        linear-gradient(180deg, #fff8f3 0%, #fffdf9 45%, #f9eee8 100%);
+      background-attachment: fixed;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .32;
+      background-image:
+        linear-gradient(30deg, transparent 48%, rgba(112,31,59,.035) 49%, rgba(112,31,59,.035) 51%, transparent 52%),
+        linear-gradient(-30deg, transparent 48%, rgba(200,149,67,.035) 49%, rgba(200,149,67,.035) 51%, transparent 52%);
+      background-size: 44px 44px;
+      z-index: -1;
+    }
+
+    button, input, textarea, select { font: inherit; }
+    button { -webkit-tap-highlight-color: transparent; }
+
+    .app-shell {
+      width: min(100% - 22px, 780px);
+      margin: 0 auto;
+      padding: max(14px, env(safe-area-inset-top)) 0 calc(80px + env(safe-area-inset-bottom));
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 26px 23px 22px;
+      border-radius: 30px;
+      color: #fffaf6;
+      background:
+        radial-gradient(circle at 87% 16%, rgba(255,255,255,.19), transparent 10rem),
+        radial-gradient(circle at 12% 100%, rgba(200,149,67,.33), transparent 14rem),
+        linear-gradient(135deg, var(--wine-dark), var(--wine) 58%, #9f3155);
+      box-shadow: 0 18px 45px rgba(73, 19, 38, .25);
+    }
+
+    .hero::after {
+      content: "♥";
+      position: absolute;
+      right: -10px;
+      bottom: -54px;
+      font-family: Georgia, serif;
+      font-size: 170px;
+      line-height: 1;
+      color: rgba(255,255,255,.075);
+      transform: rotate(-12deg);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 10px;
+      padding: 6px 10px;
+      border: 1px solid rgba(255,255,255,.24);
+      border-radius: 999px;
+      background: rgba(255,255,255,.11);
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      max-width: 620px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.25rem, 10vw, 4.2rem);
+      line-height: .98;
+      letter-spacing: -.045em;
+    }
+
+    .hero-subtitle {
+      position: relative;
+      z-index: 1;
+      max-width: 590px;
+      margin: 13px 0 0;
+      color: rgba(255,250,246,.86);
+      font-size: 1rem;
+    }
+
+    .hero-note {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 18px;
+      padding: 12px 13px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.16);
+      color: rgba(255,250,246,.95);
+      font-size: .9rem;
+    }
+
+    .overall-progress {
+      position: relative;
+      z-index: 1;
+      margin-top: 18px;
+    }
+
+    .progress-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 7px;
+      font-size: .86rem;
+      font-weight: 800;
+    }
+
+    .progress-track {
+      height: 10px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255,255,255,.18);
+    }
+
+    .progress-bar {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #f8d59d, #fff5df);
+      transition: width .25s ease;
+    }
+
+    .info-card {
+      margin-top: 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--paper);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+    }
+
+    .info-card summary {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 18px;
+      cursor: pointer;
+      list-style: none;
+      font-weight: 850;
+    }
+    .info-card summary::-webkit-details-marker { display: none; }
+    .info-card summary::after {
+      content: "⌄";
+      margin-left: auto;
+      color: var(--wine);
+      font-size: 1.25rem;
+      transition: transform .2s ease;
+    }
+    .info-card[open] summary::after { transform: rotate(180deg); }
+    .info-body {
+      padding: 0 18px 18px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: .93rem;
+    }
+    .info-body p { margin: 14px 0 0; }
+    .info-body ul { margin: 12px 0 0; padding-left: 21px; }
+    .info-body li { margin: 6px 0; }
+
+    .tabs-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      margin: 16px -11px 14px;
+      padding: 9px 11px;
+      backdrop-filter: blur(14px);
+      background: rgba(255,248,243,.86);
+      border-bottom: 1px solid rgba(112,31,59,.08);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding: 1px;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+
+    .tab-button {
+      flex: 0 0 auto;
+      min-height: 43px;
+      padding: 9px 13px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255,255,255,.86);
+      color: var(--muted);
+      font-size: .9rem;
+      font-weight: 820;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(73,19,38,.04);
+    }
+    .tab-button.active {
+      color: #fff;
+      border-color: transparent;
+      background: linear-gradient(135deg, var(--wine-dark), var(--wine));
+      box-shadow: 0 6px 16px rgba(112,31,59,.23);
+    }
+    .tab-button.spicy-tab.active {
+      background: linear-gradient(135deg, var(--spice-dark), var(--spice));
+    }
+
+    .section-header {
+      margin: 17px 2px 13px;
+      padding: 3px 2px;
+    }
+    .section-kicker {
+      color: var(--rose);
+      font-size: .78rem;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .section-header h2 {
+      margin: 3px 0 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.65rem, 7vw, 2.25rem);
+      line-height: 1.08;
+    }
+    .section-description {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: .93rem;
+    }
+    .section-stats {
+      display: inline-flex;
+      gap: 8px;
+      margin-top: 10px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--rose-light);
+      color: var(--wine);
+      font-size: .8rem;
+      font-weight: 850;
+    }
+
+    .silence-card {
+      margin-bottom: 14px;
+      padding: 18px;
+      border-radius: 22px;
+      color: #4f4549;
+      background: linear-gradient(135deg, #f4f1ed, #fffdf9);
+      border: 1px solid rgba(60,50,54,.16);
+      box-shadow: var(--shadow-soft);
+    }
+    .silence-card strong {
+      display: block;
+      margin-bottom: 6px;
+      font-family: Georgia, serif;
+      font-size: 1.25rem;
+    }
+
+    .task-list { display: grid; gap: 13px; }
+
+    .task-card {
+      position: relative;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--paper);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+      transition: border-color .2s ease, transform .2s ease, opacity .2s ease;
+    }
+    .task-card[open] { border-color: rgba(112,31,59,.31); }
+    .task-card.completed { border-color: rgba(40,123,85,.42); }
+    .task-card.skipped { opacity: .67; }
+    .task-card.spicy {
+      border-color: rgba(179,58,36,.22);
+      background:
+        radial-gradient(circle at 100% 0%, rgba(179,58,36,.10), transparent 14rem),
+        var(--paper);
+    }
+
+    .task-summary {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+    }
+    .task-summary::-webkit-details-marker { display: none; }
+
+    .task-icon {
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      width: 45px;
+      height: 45px;
+      border-radius: 15px;
+      background: linear-gradient(145deg, var(--rose-light), #fff7f9);
+      font-size: 1.35rem;
+      box-shadow: inset 0 0 0 1px rgba(112,31,59,.05);
+    }
+    .spicy .task-icon { background: linear-gradient(145deg, #ffe0d6, #fff7f3); }
+    .completed .task-icon { background: var(--green-light); }
+
+    .task-heading { flex: 1; min-width: 0; }
+    .task-title-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .task-number {
+      color: var(--rose);
+      font-size: .75rem;
+      font-weight: 900;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .task-title {
+      display: block;
+      width: 100%;
+      font-size: 1.04rem;
+      font-weight: 880;
+      line-height: 1.25;
+    }
+    .task-place {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: .82rem;
+    }
+    .task-state-icon {
+      flex: 0 0 auto;
+      color: var(--wine);
+      font-size: 1.15rem;
+    }
+    .task-card[open] .task-state-icon { transform: rotate(180deg); }
+
+    .spice-badge, .secret-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      font-size: .69rem;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+    .spice-badge { color: var(--spice-dark); background: #ffe1d7; }
+    .secret-badge { color: var(--wine); background: var(--gold-light); }
+
+    .task-content {
+      position: relative;
+      padding: 0 16px 17px;
+      border-top: 1px solid var(--border);
+    }
+    .task-instructions {
+      margin-top: 15px;
+      color: #4c3b44;
+      font-size: .94rem;
+    }
+    .task-instructions p { margin: 0 0 10px; }
+    .task-instructions ul { margin: 8px 0 10px; padding-left: 21px; }
+    .task-instructions li { margin: 4px 0; }
+    .task-instructions blockquote {
+      margin: 12px 0;
+      padding: 11px 13px;
+      border-left: 4px solid var(--rose);
+      border-radius: 0 12px 12px 0;
+      background: var(--blush);
+      font-family: Georgia, serif;
+      font-size: 1.02rem;
+    }
+
+    .answer-area {
+      display: grid;
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .field { min-width: 0; }
+    .field label, .photo-title {
+      display: block;
+      margin-bottom: 7px;
+      font-size: .88rem;
+      font-weight: 850;
+      color: #4a3540;
+    }
+    .field-help {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: .79rem;
+    }
+    .input, .textarea, .select {
+      width: 100%;
+      min-height: 48px;
+      padding: 11px 12px;
+      border: 1px solid rgba(112,31,59,.22);
+      border-radius: 13px;
+      color: var(--ink);
+      background: rgba(255,255,255,.91);
+      outline: none;
+      transition: border-color .18s ease, box-shadow .18s ease;
+    }
+    .textarea { min-height: 100px; resize: vertical; }
+    .input:focus, .textarea:focus, .select:focus {
+      border-color: var(--rose);
+      box-shadow: 0 0 0 4px rgba(201,79,114,.12);
+    }
+    .input[disabled], .textarea[disabled], .select[disabled] { opacity: .75; }
+    .word-counter {
+      margin-top: 5px;
+      text-align: right;
+      color: var(--muted);
+      font-size: .78rem;
+    }
+    .word-counter.over { color: var(--spice); font-weight: 850; }
+
+    .fields-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .fields-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .photo-box {
+      padding: 13px;
+      border: 1px dashed rgba(112,31,59,.25);
+      border-radius: 16px;
+      background: rgba(255,248,250,.72);
+    }
+    .photo-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .photo-input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+    .photo-button, .small-button, .primary-button, .secondary-button, .danger-button, .status-button {
+      border: 0;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 850;
+    }
+    .photo-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 45px;
+      padding: 9px 10px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--wine-dark), var(--wine));
+      text-align: center;
+    }
+    .photo-button.alt {
+      color: var(--wine);
+      background: #fff;
+      border: 1px solid rgba(112,31,59,.25);
+    }
+    .photo-preview-wrap { display: none; margin-top: 11px; }
+    .photo-preview-wrap.has-photo { display: block; }
+    .photo-preview {
+      display: block;
+      width: 100%;
+      max-height: 380px;
+      object-fit: contain;
+      border-radius: 13px;
+      background: #f1e8e7;
+    }
+    .photo-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: .79rem;
+    }
+    .photo-delete {
+      padding: 6px 9px;
+      border: 1px solid rgba(179,58,36,.33);
+      border-radius: 9px;
+      color: var(--spice);
+      background: #fff;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .locked-answer {
+      display: none;
+      margin-top: 15px;
+      padding: 18px 15px;
+      text-align: center;
+      border: 1px solid rgba(200,149,67,.35);
+      border-radius: 17px;
+      background:
+        radial-gradient(circle at 80% 0%, rgba(200,149,67,.18), transparent 8rem),
+        #fffaf0;
+    }
+    .locked-answer.show { display: block; }
+    .locked-answer .lock-icon { font-size: 2rem; }
+    .locked-answer strong { display: block; margin: 4px 0; }
+    .locked-answer p { margin: 0 0 12px; color: var(--muted); font-size: .86rem; }
+
+    .answer-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 13px;
+    }
+    .small-button {
+      min-height: 41px;
+      padding: 8px 11px;
+      color: var(--wine);
+      background: #fff;
+      border: 1px solid rgba(112,31,59,.22);
+    }
+    .small-button.secret-action {
+      color: #6d4a12;
+      border-color: rgba(200,149,67,.42);
+      background: #fffaf0;
+    }
+    .small-button.spicy-action {
+      color: var(--spice-dark);
+      border-color: rgba(179,58,36,.3);
+      background: var(--spice-light);
+    }
+
+    .task-footer {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin-top: 17px;
+      padding-top: 14px;
+      border-top: 1px dashed rgba(112,31,59,.17);
+    }
+    .status-button {
+      min-height: 46px;
+      padding: 9px 12px;
+      color: var(--muted);
+      background: #fff;
+      border: 1px solid rgba(112,31,59,.18);
+    }
+    .status-button.complete.active {
+      color: var(--green);
+      border-color: rgba(40,123,85,.35);
+      background: var(--green-light);
+    }
+    .status-button.skip.active {
+      color: #665d61;
+      background: #eee9e7;
+      border-color: rgba(90,80,84,.25);
+    }
+
+    .pair-rating {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: 1fr 1fr;
+    }
+    .rating-slot {
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #fff;
+    }
+    .rating-slot h4 { margin: 0 0 8px; font-size: .89rem; }
+    .rating-row { display: flex; gap: 7px; }
+    .rating-row .input { min-width: 0; }
+    .rating-lock {
+      flex: 0 0 auto;
+      padding: 8px 10px;
+      border: 0;
+      border-radius: 10px;
+      color: #fff;
+      background: var(--wine);
+      font-weight: 850;
+      cursor: pointer;
+    }
+    .rating-hidden {
+      display: grid;
+      place-items: center;
+      min-height: 48px;
+      border-radius: 11px;
+      color: #6d4a12;
+      background: #fff5df;
+      font-weight: 850;
+    }
+    .rating-reveal {
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 14px;
+      background: var(--rose-light);
+      text-align: center;
+      font-weight: 850;
+    }
+
+    .token-list { display: grid; gap: 9px; }
+    .token-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 8px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #fff;
+    }
+    .token-row.used {
+      border-color: rgba(179,58,36,.36);
+      background: var(--spice-light);
+    }
+    .token-number {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--spice);
+      font-weight: 900;
+    }
+    .token-use {
+      min-height: 40px;
+      padding: 8px 10px;
+      border: 0;
+      border-radius: 10px;
+      color: #fff;
+      background: var(--spice);
+      font-weight: 850;
+      cursor: pointer;
+    }
+    .token-row.used .token-use { color: var(--spice-dark); background: #fff; }
+
+    .spicy-gate {
+      padding: 25px 20px;
+      border-radius: 25px;
+      text-align: center;
+      color: #fff8f4;
+      background:
+        radial-gradient(circle at 15% 0%, rgba(255,255,255,.12), transparent 10rem),
+        linear-gradient(145deg, var(--spice-dark), #8f281c 60%, var(--spice));
+      box-shadow: 0 16px 36px rgba(111,29,22,.23);
+    }
+    .spicy-gate .gate-icon { font-size: 2.9rem; }
+    .spicy-gate h3 {
+      margin: 5px 0 7px;
+      font-family: Georgia, serif;
+      font-size: 1.65rem;
+    }
+    .spicy-gate p { margin: 0 auto 16px; max-width: 520px; color: rgba(255,248,244,.84); }
+    .primary-button {
+      min-height: 48px;
+      padding: 10px 16px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--wine-dark), var(--wine));
+      box-shadow: 0 7px 17px rgba(73,19,38,.2);
+    }
+    .spicy-gate .primary-button { color: var(--spice-dark); background: #fff7f2; }
+    .secondary-button {
+      min-height: 45px;
+      padding: 9px 13px;
+      color: var(--wine);
+      background: #fff;
+      border: 1px solid rgba(112,31,59,.25);
+    }
+    .danger-button {
+      min-height: 45px;
+      padding: 9px 13px;
+      color: var(--spice);
+      background: #fff;
+      border: 1px solid rgba(179,58,36,.3);
+    }
+
+    .privacy-box, .settings-card {
+      margin-top: 18px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 19px;
+      background: rgba(255,253,249,.84);
+      color: var(--muted);
+      font-size: .85rem;
+      box-shadow: var(--shadow-soft);
+    }
+    .privacy-box strong { color: var(--ink); }
+    .settings-card summary {
+      cursor: pointer;
+      color: var(--ink);
+      font-weight: 850;
+    }
+    .settings-body { margin-top: 13px; }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(18px + env(safe-area-inset-bottom));
+      z-index: 100;
+      width: min(calc(100% - 28px), 460px);
+      padding: 12px 14px;
+      border-radius: 14px;
+      color: #fff;
+      background: rgba(48,33,42,.95);
+      box-shadow: 0 12px 30px rgba(0,0,0,.22);
+      text-align: center;
+      font-size: .88rem;
+      font-weight: 780;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, 12px);
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(38,20,29,.58);
+      backdrop-filter: blur(5px);
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal {
+      width: min(100%, 440px);
+      padding: 21px;
+      border-radius: 23px;
+      background: var(--paper-strong);
+      box-shadow: 0 22px 60px rgba(28,10,18,.34);
+    }
+    .modal-icon { font-size: 2rem; }
+    .modal h3 { margin: 5px 0 7px; font-family: Georgia, serif; font-size: 1.55rem; }
+    .modal p { margin: 0; color: var(--muted); }
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin-top: 18px;
+    }
+
+    .back-top {
+      position: fixed;
+      right: 14px;
+      bottom: calc(18px + env(safe-area-inset-bottom));
+      z-index: 40;
+      display: none;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      border: 0;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--wine);
+      box-shadow: 0 9px 22px rgba(73,19,38,.26);
+      cursor: pointer;
+    }
+    .back-top.show { display: grid; }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 570px) {
+      .fields-grid, .fields-grid.three, .pair-rating { grid-template-columns: 1fr; }
+      .photo-actions { grid-template-columns: 1fr; }
+      .hero { padding: 24px 20px 21px; }
+      .task-summary { padding: 15px; }
+      .task-content { padding: 0 15px 16px; }
+      .modal-actions { grid-template-columns: 1fr; }
+      .token-row { grid-template-columns: auto 1fr; }
+      .token-use { grid-column: 1 / -1; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero">
+      <div class="eyebrow">🧭 výletní hra jen pro Tebe</div>
+      <h1>Kraków pro Anetku</h1>
+      <p class="hero-subtitle">Trochu památky, trochu romantika, trochu chaos a večer možná i víc než trochu chilli.</p>
+      <div class="hero-note"><span>💌</span><span>Nemusíš splnit všechno. Vybírej si mise podle nálady — hlavní úkol je užít si náš výlet.</span></div>
+      <div class="overall-progress">
+        <div class="progress-head"><span>Celý výlet</span><span id="overallProgressText">0 splněno</span></div>
+        <div class="progress-track"><div class="progress-bar" id="overallProgressBar"></div></div>
+      </div>
+    </section>
+
+    <details class="info-card">
+      <summary><span>💡</span><span>Jak hra funguje</span></summary>
+      <div class="info-body">
+        <p>Úkoly se ukládají automaticky přímo v tomto zařízení. Fotky, texty i zamčené odpovědi zůstávají jen v prohlížeči.</p>
+        <ul>
+          <li><strong>Splněno</strong> označ jen tehdy, když máš chuť. Žádné body, žádný stres.</li>
+          <li><strong>Přeskočit</strong> znamená „dnes ne“ — žádný dluh vůči krakovskému drakovi.</li>
+          <li>U tajných odpovědí klikni na <strong>Zamknout na večer</strong>. Odhalení proběhne až po potvrzení.</li>
+          <li>Tajné mise se zobrazí teprve po ručním odemknutí.</li>
+        </ul>
+      </div>
+    </details>
+
+    <div class="tabs-wrap">
+      <nav class="tabs" id="tabs" aria-label="Části výletu"></nav>
+    </div>
+
+    <section id="sectionHeader" class="section-header"></section>
+    <div id="sectionSpecial"></div>
+    <section class="task-list" id="taskList"></section>
+
+    <div class="privacy-box">
+      <strong>🔐 Soukromí:</strong> aplikace nic nikam neposílá. Data se ukládají jen lokálně. Neodstraňuj data webu/prohlížeče, pokud chceš zachovat odpovědi a fotografie.
+    </div>
+
+    <details class="settings-card">
+      <summary>⚙️ Nastavení hry</summary>
+      <div class="settings-body">
+        <p>Reset smaže všechny odpovědi, fotky, stav úkolů i odemčení tajných misí v tomto zařízení.</p>
+        <button type="button" class="danger-button" id="resetButton">Smazat celou hru</button>
+      </div>
+    </details>
+  </main>
+
+  <button type="button" class="back-top" id="backTop" aria-label="Zpět nahoru">↑</button>
+  <div class="toast" id="toast" role="status"></div>
+
+  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <div class="modal-icon" id="modalIcon">🔐</div>
+      <h3 id="modalTitle">Potvrzení</h3>
+      <p id="modalText"></p>
+      <div class="modal-actions">
+        <button type="button" class="secondary-button" id="modalCancel">Ještě ne</button>
+        <button type="button" class="primary-button" id="modalConfirm">Potvrdit</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  'use strict';
+
+  const APP_KEY = 'krakow-pro-anetku-v1';
+  const DB_NAME = 'krakow-pro-anetku-photos';
+  const DB_VERSION = 1;
+  const STORE_NAME = 'photos';
+
+  const sections = [
+    { id: 'day1', icon: '✈️', tab: 'Den 1', kicker: 'Přílet · centrum · galerie', title: 'První setkání s Krakovem', description: 'První polština, Rynek, Sukiennice, bazilika a galerie.' },
+    { id: 'day2', icon: '🐉', tab: 'Den 2', kicker: 'Wawel · Kazimierz · Podgórze', title: 'Králové, drak a dva turisté', description: 'Největší balíček misí. Vyber si jen ty, které se zrovna hodí.' },
+    { id: 'day3', icon: '🧂', tab: 'Den 3', kicker: 'Wieliczka', title: 'Sůl, schody a jedna pravda', description: 'Podzemní mise, přání a otázka, která počká na povrch.' },
+    { id: 'day4', icon: '🕯️', tab: 'Den 4', kicker: 'Osvětim', title: 'Režim ticha', description: 'Tady hra na chvíli ustupuje. Jediná reflexní karta patří až po odjezdu.' },
+    { id: 'trip', icon: '🧭', tab: 'Celý výlet', kicker: 'Univerzální mise', title: 'Kdykoli cestou', description: 'Jídlo, fotografie, navigace a drobné momenty, které nejsou vázané na jedinou zastávku.' },
+    { id: 'spicy', icon: '🌶️', tab: 'Tajné mise', kicker: 'Romantické · spicy · soukromé', title: 'Tajná část výletu', description: 'Odemkni ji ručně, až na ni bude správná nálada.', spicy: true }
+  ];
+
+  const tasks = [
+    {
+      id: 'd1-01', section: 'day1', number: 1, icon: '✈️', title: 'Letadlo', place: 'Let do Krakova',
+      instructions: `<p>Na jakém sedadle jsi seděla cestou do Krakova?</p>`,
+      fields: [{ type: 'text', key: 'seat', label: 'Číslo sedadla', placeholder: 'Např. 14A' }]
+    },
+    {
+      id: 'd1-02', section: 'day1', number: 2, icon: '🇵🇱', title: 'První polský důkaz', place: 'Střet civilizací',
+      instructions: `<p>Napiš první slovo, které uvidíš v polštině, a odhadni, co znamená. Překladač zatím odpočívá.</p>`,
+      fields: [
+        { type: 'text', key: 'word', label: 'Polské slovo', placeholder: 'První slovo, které Tě praští do očí' },
+        { type: 'textarea', key: 'meaning', label: 'Co podle Tebe znamená?', placeholder: 'Tvůj odhad…' }
+      ]
+    },
+    {
+      id: 'd1-03', section: 'day1', number: 3, icon: '📸', title: 'Náměstí jedním záběrem', place: 'Rynek Główny / bazilika Panny Marie',
+      instructions: `<p>Pořiď fotografii, na které budou současně alespoň tři z následujících věcí:</p><ul><li>bazilika Panny Marie,</li><li>Sukiennice,</li><li>kočár nebo kočárek,</li><li>holub,</li><li>věž radnice,</li><li>já.</li></ul><p>Poslední položka je samozřejmě nejvzácnější krakovský exponát.</p>`,
+      photos: [{ key: 'photo', label: 'Fotografie náměstí' }]
+    },
+    {
+      id: 'd1-04', section: 'day1', number: 4, icon: '🛍️', title: 'Obchod století', place: 'Sukiennice',
+      instructions: `<p>Najdi suvenýr, který Ti nejvíce připomíná mě. Nemusíš ho kupovat — stačí jej vyfotit a vysvětlit svůj výběr.</p>`,
+      photos: [{ key: 'photo', label: 'Suvenýr století' }],
+      fields: [{ type: 'textarea', key: 'why', label: 'Proč právě tenhle?', placeholder: 'Vysvětlení, které mě možná potěší a možná znepokojí…' }]
+    },
+    {
+      id: 'd1-05', section: 'day1', number: 5, icon: '🏰', title: 'Dvě věže, jedna teorie', place: 'Bazilika Panny Marie',
+      instructions: `<p>Vymysli zcela falešné, ale přesvědčivé vysvětlení, proč mají věže baziliky odlišnou podobu.</p><p>Musíš použít slova: <strong>král</strong>, <strong>žárlivost</strong> a <strong>stavební povolení</strong>.</p>`,
+      fields: [{ type: 'textarea', key: 'theory', label: 'Tvoje odborná teorie', placeholder: 'Můžeš ji zapsat, nebo úkol přednést živě…', help: 'Pokud ji odvyprávíš živě, stačí úkol označit jako splněný.' }]
+    },
+    {
+      id: 'd1-06', section: 'day1', number: 6, icon: '🎺', title: 'Hejnałová předpověď', place: 'Okolí baziliky Panny Marie',
+      instructions: `<p>Ještě před zazněním trubačského signálu odhadni, jak dlouho bude trvat. Po skončení sama zhodnoť kvalitu své předpovědi.</p>`,
+      fields: [
+        { type: 'number', key: 'seconds', label: 'Můj odhad v sekundách', placeholder: '0', min: 1, max: 600 },
+        { type: 'select', key: 'verdict', label: 'Sebehodnocení', options: ['', 'Geniální', 'Přijatelné', 'Totální turistický freestyle'] }
+      ]
+    },
+    {
+      id: 'd1-07', section: 'day1', number: 7, icon: '🖼️', title: 'Obraz pro mě', place: 'Galerie', secret: true,
+      instructions: `<p>Vyber jeden obraz, který si myslíš, že by se mi mohl fakt líbit. Ideálně tajně.</p>`,
+      photos: [{ key: 'photo', label: 'Vybraný obraz' }],
+      fields: [{ type: 'textarea', key: 'why', label: 'Proč by se mi mohl líbit?', placeholder: 'Jedna věta úplně stačí…' }]
+    },
+    {
+      id: 'd1-08', section: 'day1', number: 8, icon: '❤️', title: 'Obraz pro nás', place: 'Galerie',
+      instructions: `<p>Vyber jeden obraz, který podle Tebe nejlépe znázorňuje nás dva nebo náš vztah.</p>`,
+      photos: [{ key: 'photo', label: 'Náš obraz' }],
+      fields: [{ type: 'textarea', key: 'why', label: 'Proč právě tenhle?', placeholder: 'Romantická, vtipná i podezřele upřímná odpověď je správně.' }]
+    },
+
+    {
+      id: 'd2-09', section: 'day2', number: 9, icon: '👑', title: 'Královský portrét', place: 'Wawel',
+      instructions: `<p>Najděte místo, které by mohlo posloužit jako kulisa královského portrétu. Na společné fotografii:</p><ul><li>jeden vypadá jako panovník,</li><li>druhý jako člověk, který už jeho panování nezvládá.</li></ul>`,
+      photos: [{ key: 'photo', label: 'Povinná společná fotka' }]
+    },
+    {
+      id: 'd2-10', section: 'day2', number: 10, icon: '🕳️', title: 'Cesta pod zem', place: 'Dračí sluj',
+      instructions: `<p>Napiš jednu věc, která Tě v jeskyni zaujala.</p>`,
+      fields: [{ type: 'textarea', key: 'detail', label: 'Co Tě zaujalo?', placeholder: 'Jeden detail, dojem nebo překvapení…' }]
+    },
+    {
+      id: 'd2-11', section: 'day2', number: 11, icon: '🔍', title: 'Tajný detail Krakova', place: 'Historické centrum',
+      instructions: `<p>Vyfoť jeden drobný detail, kterého jsem si podle Tebe nevšiml.</p>`,
+      photos: [{ key: 'photo', label: 'Tajný detail' }],
+      fields: [{ type: 'text', key: 'place', label: 'Kde vznikla fotografie?', placeholder: 'Ulice, památka nebo stručný popis místa' }]
+    },
+    {
+      id: 'd2-12', section: 'day2', number: 12, icon: '📜', title: 'Královské nařízení', place: 'Wawel',
+      instructions: `<p>Jako vládkyně Krakova vydej jedno nařízení, které budu muset dodržovat do konce dne.</p><ul><li>Musí být neškodné.</li><li>Musí být reálně splnitelné.</li><li>Musí být alespoň trochu směšné.</li></ul><blockquote>Pokaždé, když uvidím korunu, musím Tě oslovit „Vaše Výsosti“.</blockquote>`,
+      fields: [{ type: 'textarea', key: 'order', label: 'Text královského nařízení', placeholder: 'Nařizuji tímto…' }]
+    },
+    {
+      id: 'd2-13', section: 'day2', number: 13, icon: '🐉', title: 'Drak rozhodne', place: 'Okolí wawelského draka',
+      instructions: `<p>Vymysli dvě možnosti večerního programu. Jednu přiděl hlavě a druhou ocasu. Já si bez přemýšlení vyberu jednu stranu draka. Vybraná možnost platí.</p>`,
+      fields: [
+        { type: 'text', key: 'head', label: 'Dračí hlava', placeholder: 'Možnost A' },
+        { type: 'text', key: 'tail', label: 'Dračí ocas', placeholder: 'Možnost B' },
+        { type: 'select', key: 'result', label: 'Drak rozhodl', options: ['', 'Hlava', 'Ocas'] }
+      ]
+    },
+    {
+      id: 'd2-14', section: 'day2', number: 14, icon: '🕵️', title: 'Hradní detektiv', place: 'Wawel · hradní okruh',
+      instructions: `<p>Najdi během prohlídky tři položky:</p>`,
+      fields: [
+        { type: 'textarea', key: 'want', label: 'Chtěla bych mít doma', placeholder: 'Jedna věc…' },
+        { type: 'textarea', key: 'notwant', label: 'Doma bych rozhodně nechtěla', placeholder: 'Jedna věc…' },
+        { type: 'textarea', key: 'impractical', label: 'Příšerně nepraktické', placeholder: 'Jedna věc…' }
+      ]
+    },
+    {
+      id: 'd2-15', section: 'day2', number: 15, icon: '🛏️', title: 'Královská domácnost', place: 'Wawel', spice: 2,
+      instructions: `<p>Vyber místnost nebo prostor, ve kterém bychom podle Tebe jako historický královský pár měli nejčastěji sex.</p>`,
+      photos: [{ key: 'photo', label: 'Vybraný prostor (pokud se smí fotit)' }],
+      fields: [{ type: 'textarea', key: 'why', label: 'Proč právě tady?', placeholder: 'Historicko-erotická argumentace…' }]
+    },
+    {
+      id: 'd2-16', section: 'day2', number: 16, icon: '🤝', title: 'Dračí přísaha', place: 'Výstup z Dračí sluje',
+      instructions: `<p>Položíme současně ruku na nejbližší kámen a každý řekneme jednu věc, kterou bychom spolu chtěli během následujícího roku podniknout.</p><p>Odpověď nesmí být „jet zase někam na výlet“. To by bylo až moc easy mode.</p>`,
+      fields: [
+        { type: 'textarea', key: 'hers', label: 'Moje přání', placeholder: 'Co bych chtěla podniknout…' },
+        { type: 'textarea', key: 'his', label: 'Tvoje přání', placeholder: 'Co chceš podniknout Ty…' }
+      ]
+    },
+    {
+      id: 'd2-17', section: 'day2', number: 17, icon: '3️⃣', title: 'Kazimierz ve třech slovech', place: 'Kazimierz',
+      instructions: `<p>Popiš čtvrť přesně třemi slovy.</p>`,
+      fields: [{ type: 'textarea', key: 'threewords', label: 'Přesně tři slova', placeholder: 'První · druhé · třetí', maxWords: 3 }]
+    },
+    {
+      id: 'd2-18', section: 'day2', number: 18, icon: '🎬', title: 'Romantická komedie', place: 'Historické centrum',
+      instructions: `<p>Najdi místo, které by mohlo být na plakátu romantické komedie o našem výletu.</p><p>Vymysli název filmu, krátký slogan a rozhodni, kdo z nás by dostal hlavní roli.</p><blockquote>Přiletěli za památkami. Zůstali kvůli pierogům.</blockquote>`,
+      photos: [{ key: 'photo', label: 'Místo pro filmový plakát' }],
+      fields: [
+        { type: 'text', key: 'movie', label: 'Název filmu', placeholder: 'Krakovský blockbuster…' },
+        { type: 'text', key: 'slogan', label: 'Slogan', placeholder: 'Jedna úderná věta…' },
+        { type: 'select', key: 'lead', label: 'Hlavní role', options: ['', 'Já', 'Ty', 'Oba stejně', 'Holub z Rynku'] }
+      ]
+    },
+    {
+      id: 'd2-19', section: 'day2', number: 19, icon: '☕', title: 'Stůl pro dva', place: 'Kazimierz nebo centrum',
+      instructions: `<p>Najdi podnik, zahrádku nebo zákoutí, které by bylo ideální pro naše první rande, kdybychom se ještě vůbec neznali.</p>`,
+      photos: [{ key: 'photo', label: 'Místo pro naše první rande' }]
+    },
+    {
+      id: 'd2-20', section: 'day2', number: 20, icon: '🤸', title: 'Socha našeho dne', place: 'Lávka Bernatka, pokud přes ni půjdeme',
+      instructions: `<p>Vyber jednu postavu nebo sochu, která nejlépe vystihuje naši aktuální energii.</p><blockquote>My po devatenáctém kilometru a před první zapiekankou.</blockquote>`,
+      photos: [{ key: 'photo', label: 'Socha našeho dne' }],
+      fields: [{ type: 'text', key: 'caption', label: 'Popisek', placeholder: 'Naše energie právě teď…' }]
+    },
+
+    {
+      id: 'd3-21', section: 'day3', number: 21, icon: '🧂', title: 'Solný průzkumník', place: 'Wieliczka',
+      instructions: `<p>Vyber tři věci z prohlídky:</p>`,
+      fields: [
+        { type: 'textarea', key: 'beautiful', label: 'Nejkrásnější prostor', placeholder: 'Místo nebo popis…' },
+        { type: 'textarea', key: 'strange', label: 'Nejpodivnější věc', placeholder: 'Co Tě překvapilo…' },
+        { type: 'textarea', key: 'nohome', label: 'Doma bych rozhodně nechtěla', placeholder: 'Jedna podzemní hrůza…' }
+      ]
+    },
+    {
+      id: 'd3-22', section: 'day3', number: 22, icon: '❓', title: '800 schodů, jedna pravda', place: 'Wieliczka', secret: true,
+      instructions: `<p>Vymysli jednu otázku, na kterou ses mě ještě nikdy nezeptala. Polož mi ji až po návratu na povrch.</p><p>Může být milá, hlubší i lehce spicy.</p>`,
+      fields: [{ type: 'textarea', key: 'question', label: 'Otázka na povrch', placeholder: 'Na co ses mě ještě nikdy nezeptala?' }]
+    },
+    {
+      id: 'd3-23', section: 'day3', number: 23, icon: '✨', title: 'Kaple pro jedno přání', place: 'Nejpůsobivější prostor dolu', secret: true,
+      instructions: `<p>Něco si přej — musí se to týkat nás dvou. Potom rozhodni, co s přáním uděláš.</p>`,
+      fields: [
+        { type: 'select', key: 'choice', label: 'Své přání…', options: ['', 'Řeknu hned', 'Řeknu večer', 'Nechám si jako tajemství'] },
+        { type: 'textarea', key: 'wish', label: 'Přání si můžeš tajně zapsat', placeholder: 'Volitelné. Potom ho můžeš zamknout na večer.' }
+      ]
+    },
+
+    {
+      id: 'd4-24', section: 'day4', number: 24, icon: '🕯️', title: 'Co se mnou zůstalo', place: 'Až po odjezdu z Osvětimi',
+      instructions: `<p>Až po odjezdu napiš jednu informaci, osobní příběh, místo nebo detail, který v Tobě zůstal nejsilněji.</p><p>Není nutné psát dlouze. Můžeš si odpověď nechat jen pro sebe nebo ji se mnou sdílet.</p>`,
+      fields: [{ type: 'textarea', key: 'reflection', label: 'Soukromý zápis', placeholder: 'Co v Tobě zůstalo…' }]
+    },
+
+    {
+      id: 'trip-25', section: 'trip', number: 25, icon: '🍽️', title: 'Polský ochutnávkový trojboj', place: 'Během celého výletu',
+      instructions: `<p>Společně ochutnejte tři různé polské věci:</p><ul><li>něco slaného,</li><li>něco sladkého,</li><li>něco, co ani jeden z vás předtím neměl.</li></ul>`,
+      fields: [
+        { type: 'text', key: 'salty', label: 'Něco slaného', placeholder: 'Název jídla' },
+        { type: 'text', key: 'sweet', label: 'Něco sladkého', placeholder: 'Název jídla' },
+        { type: 'text', key: 'new', label: 'Něco nového', placeholder: 'Název jídla' },
+        { type: 'text', key: 'winner', label: 'Vítěz trojboje', placeholder: 'A absolutním vítězem se stává…' }
+      ]
+    },
+    {
+      id: 'trip-26', section: 'trip', number: 26, icon: '🥖', title: 'Zapiekankový verdikt', place: 'Kazimierz nebo kdykoli přijde hlad', special: 'ratingPair',
+      instructions: `<p>Vyberte jednu zapiekanku společně. Každý dá tajně hodnocení od 1 do 10. Odpovědi odhalte současně.</p><p>Fotografii pořiďte dřív, než ji někdo začne jíst. To bývá nejtěžší část mise.</p>`,
+      photos: [{ key: 'photo', label: 'Zapiekanka před útokem' }]
+    },
+    {
+      id: 'trip-27', section: 'trip', number: 27, icon: '🥟', title: 'Pierogová diplomacie', place: 'Během společného jídla',
+      instructions: `<p>Každý vybere jednu příchuť pierogů pro toho druhého. Nesmíte si vybrat sami. Každý musí ochutnat alespoň jeden kus z výběru partnera.</p>`,
+      fields: [
+        { type: 'text', key: 'forher', label: 'Co vybral on pro mě', placeholder: 'Příchuť pierogů' },
+        { type: 'text', key: 'forhim', label: 'Co jsem vybrala já pro něj', placeholder: 'Příchuť pierogů' },
+        { type: 'text', key: 'verdict', label: 'Diplomatický verdikt', placeholder: 'Kdo vybral lépe?' }
+      ]
+    },
+    {
+      id: 'trip-28', section: 'trip', number: 28, icon: '📷', title: 'Cizí fotografie', place: 'Kdekoli cestou',
+      instructions: `<p>Požádejte někoho, aby vás společně vyfotil.</p>`,
+      photos: [{ key: 'photo', label: 'Fotografie od cizího fotografa' }]
+    },
+    {
+      id: 'trip-29', section: 'trip', number: 29, icon: '🧭', title: 'Navigátor', place: 'Jedna hodina bez online mapy',
+      instructions: `<p>Na následující hodinu přebíráš navigaci. Při navigaci je zakázáno koukat do online mapy.</p>`,
+      fields: [{ type: 'textarea', key: 'result', label: 'Kam jsme nakonec došli?', placeholder: 'Úspěch, zkratka, nebo nový okres?' }]
+    },
+    {
+      id: 'trip-30', section: 'trip', number: 30, icon: '🤳', title: 'Společná fotografie', place: 'Místo, které chceš uchovat',
+      instructions: `<p>Během výletu sama navrhni a iniciuj alespoň jednu společnou fotografii na místě, které chceš uchovat. Nesmí jít o splnění jiného fotografického úkolu.</p>`,
+      photos: [{ key: 'photo', label: 'Fotografie, kterou jsi sama iniciovala' }]
+    },
+
+    {
+      id: 'sp-01', section: 'spicy', number: 1, icon: '🕵️', title: 'Tajný portrét', place: 'Během výletu', secret: true, spicy: 0,
+      instructions: `<p>Nenápadně mě vyfoť v okamžiku, kdy podle Tebe vypadám nejspokojeněji.</p><p>Fotografii odhal až poslední večer.</p>`,
+      photos: [{ key: 'photo', label: 'Tajný portrét' }]
+    },
+    {
+      id: 'sp-02', section: 'spicy', number: 2, icon: '💋', title: 'Ukradený polibek', place: 'Kdekoli, kde ho nečekám', spicy: 1,
+      instructions: `<p>Během výletu mi dej polibek na místě nebo v okamžiku, kdy bych ho vůbec nečekal.</p>`,
+      fields: [{ type: 'textarea', key: 'moment', label: 'Kdy se to povedlo?', placeholder: 'Volitelné — může zůstat jen mezi námi.' }]
+    },
+    {
+      id: 'sp-03', section: 'spicy', number: 3, icon: '💃', title: 'Večerní taneček', place: 'Po návratu na ubytování', spicy: 1,
+      instructions: `<p>Vyber jednu píseň. Po návratu na ubytování na ni musím zatancovat hot taneček.</p>`,
+      fields: [{ type: 'text', key: 'song', label: 'Vybraná píseň', placeholder: 'Název skladby' }]
+    },
+    {
+      id: 'sp-04', section: 'spicy', number: 4, icon: '💌', title: 'Tajné přání', place: 'Na společný večer', secret: true, spicy: 1,
+      instructions: `<p>Zapiš jedno malé přání pro společný večer. Zobrazíš mi ho až po návratu na ubytování.</p>`,
+      fields: [{ type: 'textarea', key: 'wish', label: 'Tajné přání', placeholder: 'Co by Ti dnes udělalo radost?' }]
+    },
+    {
+      id: 'sp-05', section: 'spicy', number: 5, icon: '🥰', title: 'Pět komplimentů', place: 'Během jednoho dne', spicy: 0,
+      instructions: `<p>Použij během dne pět různých komplimentů. Večer mi je přečti a já popravdě řeknu, kolika z nich jsem si všiml.</p>`,
+      fields: [
+        { type: 'text', key: 'c1', label: 'Kompliment 1', placeholder: 'První kompliment' },
+        { type: 'text', key: 'c2', label: 'Kompliment 2', placeholder: 'Druhý kompliment' },
+        { type: 'text', key: 'c3', label: 'Kompliment 3', placeholder: 'Třetí kompliment' },
+        { type: 'text', key: 'c4', label: 'Kompliment 4', placeholder: 'Čtvrtý kompliment' },
+        { type: 'text', key: 'c5', label: 'Kompliment 5', placeholder: 'Pátý kompliment' },
+        { type: 'number', key: 'noticed', label: 'Kolika jsem si všiml?', placeholder: '0', min: 0, max: 5 }
+      ]
+    },
+    {
+      id: 'sp-06', section: 'spicy', number: 6, icon: '✉️', title: 'Hotelová obálka', place: 'Otevřít až na pokoji', secret: true, spicy: 2,
+      instructions: `<p>Napiš, co bys dnes večer chtěla zažít — neboj se odvázat. Odpověď napiš co nejkonkrétněji a zamkni ji na večer.</p>`,
+      fields: [{ type: 'textarea', key: 'fantasy', label: 'Obsah hotelové obálky', placeholder: 'Dnes večer bych chtěla…' }]
+    },
+    {
+      id: 'sp-07', section: 'spicy', number: 7, icon: '🎟️', title: 'Tři žetony', place: 'Kdykoli v soukromí', special: 'tokens', spicy: 3,
+      instructions: `<p>Získáváš tři žetony. Je jen na Tobě, jaké vybereš a kdy je použiješ. Stejnou možnost můžeš zvolit i vícekrát.</p><p><strong>Žeton je jasná žádost, ne automatická povinnost — platí, když je nám oběma v danou chvíli příjemný.</strong></p>`,
+      tokenOptions: ['Masáž', 'Masáž nohou', 'Společná sprcha', 'Sex – teď hned!', 'Spiderman pusa', 'Striptýz']
+    },
+    {
+      id: 'sp-08', section: 'spicy', number: 8, icon: '🔥', title: 'Co je na mně dnes nejvíc sexy', place: 'Večer', spicy: 1,
+      instructions: `<p>Řekni mi jednu konkrétní věc, která Ti na mně během dne připadala přitažlivá.</p><p>Nesmí to být obecné „jsi hezký“. Musí jít o konkrétní okamžik, gesto nebo chování.</p>`,
+      fields: [{ type: 'textarea', key: 'answer', label: 'Konkrétní okamžik', placeholder: 'Dnes mi na Tobě přišlo sexy, když…' }]
+    },
+    {
+      id: 'sp-09', section: 'spicy', number: 9, icon: '🗺️', title: 'Polibková mapa', place: 'Odhalit večer', secret: true, spicy: 2,
+      instructions: `<p>Do skryté odpovědi napiš tři místa na mém těle, kam chceš večer dostat polibek:</p><ul><li>jedno běžné,</li><li>jedno méně očekávané,</li><li>jedno, které mi odhalíš až těsně před splněním.</li></ul>`,
+      fields: [
+        { type: 'text', key: 'normal', label: 'Jedno běžné', placeholder: 'První místo' },
+        { type: 'text', key: 'unexpected', label: 'Jedno méně očekávané', placeholder: 'Druhé místo' },
+        { type: 'text', key: 'last', label: 'Odhalím až těsně před splněním', placeholder: 'Třetí místo' }
+      ]
+    },
+    {
+      id: 'sp-10', section: 'spicy', number: 10, icon: '🚫', title: 'Jedna věta bez cenzury', place: 'Otevřít až na pokoji', secret: true, spicy: 3,
+      instructions: `<p>Dokonči větu co nejkonkrétněji:</p><blockquote>Dnes večer chci, abys mi…</blockquote>`,
+      fields: [{ type: 'textarea', key: 'sentence', label: 'Jedna věta bez cenzury', placeholder: 'Dnes večer chci, abys mi…' }]
+    },
+    {
+      id: 'sp-11', section: 'spicy', number: 11, icon: '👔', title: 'Hotelový dress code', place: 'Po příchodu na pokoj', spicy: 2,
+      instructions: `<p>Vyber jeden kus oblečení, který si mám po příchodu na pokoj ponechat, dokud mi nedovolíš ho sundat.</p><p>Může jít o košili, tričko, spodní prádlo nebo cokoli jiného.</p>`,
+      fields: [{ type: 'text', key: 'clothing', label: 'Vybraný kus oblečení', placeholder: 'Co si mám nechat na sobě?' }]
+    },
+    {
+      id: 'sp-12', section: 'spicy', number: 12, icon: '👑', title: 'Královský rozkaz – soukromá verze', place: 'Na pokoji', spicy: 3,
+      instructions: `<p>Po návratu na pokoj vydáš jeden erotický rozkaz, který platí do půlnoci nebo dokud ho nezrušíš.</p><p>Může určit, co mám udělat, co si mám sundat nebo kam Tě mám políbit.</p>`,
+      fields: [
+        { type: 'textarea', key: 'order', label: 'Soukromé nařízení', placeholder: 'Nařizuji Ti…' },
+        { type: 'select', key: 'state', label: 'Stav rozkazu', options: ['', 'Připravený', 'Aktivní', 'Zrušený', 'Splněný'] }
+      ]
+    }
+  ];
+
+  const defaultState = {
+    activeSection: 'day1',
+    spicyUnlocked: false,
+    taskData: {}
+  };
+
+  let state = loadState();
+  let dbPromise = null;
+  let modalResolver = null;
+  let toastTimer = null;
+  const photoUrls = new Map();
+
+  const tabsEl = document.getElementById('tabs');
+  const headerEl = document.getElementById('sectionHeader');
+  const specialEl = document.getElementById('sectionSpecial');
+  const taskListEl = document.getElementById('taskList');
+  const overallTextEl = document.getElementById('overallProgressText');
+  const overallBarEl = document.getElementById('overallProgressBar');
+  const toastEl = document.getElementById('toast');
+  const backTopEl = document.getElementById('backTop');
+  const modalBackdrop = document.getElementById('modalBackdrop');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalText = document.getElementById('modalText');
+  const modalIcon = document.getElementById('modalIcon');
+  const modalConfirm = document.getElementById('modalConfirm');
+  const modalCancel = document.getElementById('modalCancel');
+
+  function loadState() {
+    try {
+      const stored = JSON.parse(localStorage.getItem(APP_KEY));
+      return stored && typeof stored === 'object'
+        ? { ...JSON.parse(JSON.stringify(defaultState)), ...stored, taskData: stored.taskData || {} }
+        : JSON.parse(JSON.stringify(defaultState));
+    } catch (error) {
+      console.warn('Nepodařilo se načíst stav:', error);
+      return JSON.parse(JSON.stringify(defaultState));
+    }
+  }
+
+  function saveState() {
+    try { localStorage.setItem(APP_KEY, JSON.stringify(state)); }
+    catch (error) { showToast('Text se nepodařilo uložit. Úložiště prohlížeče může být plné.'); }
+  }
+
+  function getTaskState(taskId) {
+    if (!state.taskData[taskId]) {
+      state.taskData[taskId] = { values: {}, status: '', locked: false, pair: {}, tokens: [] };
+    }
+    const item = state.taskData[taskId];
+    item.values ||= {};
+    item.pair ||= {};
+    item.tokens ||= [];
+    return item;
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+  }
+
+  function spiceText(level) {
+    return level ? '🌶️'.repeat(level) : '';
+  }
+
+  function renderTabs() {
+    tabsEl.innerHTML = sections.map(section => `
+      <button type="button" class="tab-button ${section.spicy ? 'spicy-tab' : ''} ${state.activeSection === section.id ? 'active' : ''}" data-section="${section.id}">
+        ${section.icon} ${section.tab}${section.id === 'spicy' && !state.spicyUnlocked ? ' 🔒' : ''}
+      </button>
+    `).join('');
+
+    tabsEl.querySelectorAll('[data-section]').forEach(button => {
+      button.addEventListener('click', () => {
+        state.activeSection = button.dataset.section;
+        saveState();
+        render();
+        window.scrollTo({ top: document.querySelector('.tabs-wrap').offsetTop - 4, behavior: 'smooth' });
+      });
+    });
+  }
+
+  async function render() {
+    renderTabs();
+    renderHeader();
+    await renderTasks();
+    updateProgress();
+  }
+
+  function renderHeader() {
+    const section = sections.find(item => item.id === state.activeSection) || sections[0];
+    const sectionTasks = tasks.filter(task => task.section === section.id);
+    const completed = sectionTasks.filter(task => getTaskState(task.id).status === 'completed').length;
+    const skipped = sectionTasks.filter(task => getTaskState(task.id).status === 'skipped').length;
+
+    headerEl.innerHTML = `
+      <div class="section-kicker">${section.icon} ${escapeHtml(section.kicker)}</div>
+      <h2>${escapeHtml(section.title)}</h2>
+      <p class="section-description">${escapeHtml(section.description)}</p>
+      <div class="section-stats"><span>${completed} splněno</span><span>·</span><span>${skipped} přeskočeno</span><span>·</span><span>${sectionTasks.length} misí</span></div>
+    `;
+
+    if (section.id === 'day4') {
+      specialEl.innerHTML = `<div class="silence-card"><strong>Telefon může na chvíli odpočívat.</strong>V areálu se žádné herní úkoly neplní. Reflexní kartu otevři až po odjezdu, v klidu a bez spěchu.</div>`;
+    } else if (section.id === 'spicy' && !state.spicyUnlocked) {
+      specialEl.innerHTML = `
+        <div class="spicy-gate">
+          <div class="gate-icon">🌶️</div>
+          <h3>Tajné mise jsou zamčené</h3>
+          <p>Uvnitř čeká romantika, provokace i pár úkolů pouze za zavřenými dveřmi. Odemknutí nemá žádný časovač — stačí ho potvrdit.</p>
+          <button type="button" class="primary-button" id="unlockSpicy">Odemknout tajné mise</button>
+        </div>
+      `;
+      document.getElementById('unlockSpicy').addEventListener('click', async () => {
+        const yes = await askConfirm({
+          icon: '🌶️',
+          title: 'Odemknout tajné mise?',
+          text: 'Mise se zobrazí hned. Plní se jen tehdy, když je vám oběma daná věc příjemná.',
+          confirm: 'Ano, odemknout'
+        });
+        if (yes) {
+          state.spicyUnlocked = true;
+          saveState();
+          showToast('Tajné mise odemčeny. Kraków začíná být zajímavý.');
+          render();
+        }
+      });
+    } else if (section.id === 'spicy' && state.spicyUnlocked) {
+      specialEl.innerHTML = `<div style="display:flex;justify-content:flex-end;margin:-2px 2px 12px"><button type="button" class="small-button spicy-action" id="lockSpicySection">Zamknout celou sekci</button></div>`;
+      document.getElementById('lockSpicySection').addEventListener('click', async () => {
+        const yes = await askConfirm({ icon: '🔒', title: 'Zamknout tajné mise?', text: 'Odpovědi zůstanou uložené. Sekci můžeš později znovu odemknout.', confirm: 'Zamknout sekci' });
+        if (yes) {
+          state.spicyUnlocked = false;
+          saveState();
+          render();
+        }
+      });
+    } else {
+      specialEl.innerHTML = '';
+    }
+  }
+
+  async function renderTasks() {
+    const sectionId = state.activeSection;
+    if (sectionId === 'spicy' && !state.spicyUnlocked) {
+      taskListEl.innerHTML = '';
+      return;
+    }
+
+    const visibleTasks = tasks.filter(task => task.section === sectionId);
+    taskListEl.innerHTML = visibleTasks.map(renderTaskCard).join('');
+    bindTaskEvents(visibleTasks);
+    await hydratePhotos(visibleTasks);
+  }
+
+  function renderTaskCard(task) {
+    const taskState = getTaskState(task.id);
+    const statusClass = taskState.status === 'completed' ? 'completed' : taskState.status === 'skipped' ? 'skipped' : '';
+    const badges = [
+      task.spice ? `<span class="spice-badge">${spiceText(task.spice)}</span>` : '',
+      task.secret ? `<span class="secret-badge">🔒 lze zamknout</span>` : ''
+    ].join('');
+
+    const answerHtml = task.special === 'ratingPair'
+      ? renderRatingPair(task, taskState)
+      : task.special === 'tokens'
+        ? renderTokens(task, taskState)
+        : renderRegularAnswers(task, taskState);
+
+    return `
+      <details class="task-card ${task.section === 'spicy' ? 'spicy' : ''} ${statusClass}" data-task-card="${task.id}">
+        <summary class="task-summary">
+          <div class="task-icon">${taskState.status === 'completed' ? '✓' : task.icon}</div>
+          <div class="task-heading">
+            <div class="task-title-row">
+              <span class="task-number">Mise ${task.number}</span>${badges}
+              <span class="task-title">${escapeHtml(task.title)}</span>
+            </div>
+            <span class="task-place">📍 ${escapeHtml(task.place || 'Kdekoli cestou')}</span>
+          </div>
+          <span class="task-state-icon">⌄</span>
+        </summary>
+        <div class="task-content">
+          <div class="task-instructions">${task.instructions}</div>
+          ${answerHtml}
+          <div class="task-footer">
+            <button type="button" class="status-button complete ${taskState.status === 'completed' ? 'active' : ''}" data-status="completed" data-task="${task.id}">✓ Splněno</button>
+            <button type="button" class="status-button skip ${taskState.status === 'skipped' ? 'active' : ''}" data-status="skipped" data-task="${task.id}">Přeskočit</button>
+          </div>
+        </div>
+      </details>
+    `;
+  }
+
+  function renderRegularAnswers(task, taskState) {
+    const locked = Boolean(taskState.locked);
+    const photos = (task.photos || []).map(photo => renderPhotoField(task, photo, locked)).join('');
+    const fields = (task.fields || []).map(field => renderField(task, field, taskState.values[field.key], locked)).join('');
+    const lockActions = task.secret ? `
+      <div class="answer-actions">
+        ${locked
+          ? ''
+          : `<button type="button" class="small-button secret-action" data-lock-task="${task.id}">🔒 Zamknout na večer</button>`}
+      </div>
+    ` : '';
+
+    return `
+      <div class="answer-area ${locked ? 'hidden' : ''}" data-answer-area="${task.id}">
+        ${photos}${fields}${lockActions}
+      </div>
+      ${task.secret ? `
+        <div class="locked-answer ${locked ? 'show' : ''}" data-locked-area="${task.id}">
+          <div class="lock-icon">🔐</div>
+          <strong>Odpověď je zamčená</strong>
+          <p>Obsah se zobrazí až po ručním potvrzení. Žádný časovač, žádné podvádění s hodinkami.</p>
+          <button type="button" class="small-button secret-action" data-unlock-task="${task.id}">Odhalit odpověď</button>
+        </div>
+      ` : ''}
+    `;
+  }
+
+  function renderField(task, field, value, locked) {
+    const safeValue = escapeHtml(value ?? '');
+    const common = `data-field data-task="${task.id}" data-key="${field.key}" ${locked ? 'disabled' : ''}`;
+    let control = '';
+
+    if (field.type === 'textarea') {
+      control = `<textarea class="textarea" ${common} placeholder="${escapeHtml(field.placeholder || '')}" ${field.maxWords ? `data-max-words="${field.maxWords}"` : ''}>${safeValue}</textarea>`;
+    } else if (field.type === 'select') {
+      control = `<select class="select" ${common}>${(field.options || []).map(option => `<option value="${escapeHtml(option)}" ${String(value ?? '') === option ? 'selected' : ''}>${option || 'Vyber možnost…'}</option>`).join('')}</select>`;
+    } else {
+      control = `<input class="input" type="${field.type === 'number' ? 'number' : 'text'}" ${common} value="${safeValue}" placeholder="${escapeHtml(field.placeholder || '')}" ${field.min !== undefined ? `min="${field.min}"` : ''} ${field.max !== undefined ? `max="${field.max}"` : ''}>`;
+    }
+
+    return `<div class="field"><label>${escapeHtml(field.label)}</label>${control}${field.maxWords ? `<div class="word-counter" data-word-counter="${task.id}:${field.key}">0 / ${field.maxWords} slov</div>` : ''}${field.help ? `<p class="field-help">${escapeHtml(field.help)}</p>` : ''}</div>`;
+  }
+
+  function renderPhotoField(task, photo, locked) {
+    const uid = `${task.id}-${photo.key}`;
+    return `
+      <div class="photo-box" data-photo-box="${task.id}:${photo.key}">
+        <span class="photo-title">${escapeHtml(photo.label)}</span>
+        <div class="photo-actions">
+          <input class="photo-input" type="file" accept="image/*" capture="environment" id="camera-${uid}" data-photo-input data-task="${task.id}" data-key="${photo.key}" ${locked ? 'disabled' : ''}>
+          <label class="photo-button" for="camera-${uid}">📷 Vyfotit</label>
+          <input class="photo-input" type="file" accept="image/*" id="gallery-${uid}" data-photo-input data-task="${task.id}" data-key="${photo.key}" ${locked ? 'disabled' : ''}>
+          <label class="photo-button alt" for="gallery-${uid}">🖼️ Vybrat z galerie</label>
+        </div>
+        <div class="photo-preview-wrap" data-photo-preview-wrap="${task.id}:${photo.key}">
+          <img class="photo-preview" alt="Náhled fotografie" data-photo-preview="${task.id}:${photo.key}">
+          <div class="photo-meta"><span data-photo-status="${task.id}:${photo.key}">Fotografie je uložena v zařízení.</span><button type="button" class="photo-delete" data-delete-photo="${task.id}:${photo.key}" ${locked ? 'disabled' : ''}>Smazat</button></div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderRatingPair(task, taskState) {
+    const pair = taskState.pair || {};
+    const revealed = Boolean(pair.revealed);
+    const slot = (side, label) => {
+      const locked = Boolean(pair[`lock${side}`]);
+      const value = pair[`value${side}`] ?? '';
+      return `<div class="rating-slot"><h4>${label}</h4>${locked && !revealed
+        ? `<div class="rating-hidden">🔒 Hodnocení zamčeno <button type="button" class="small-button" style="margin-left:6px;min-height:34px;padding:5px 8px" data-pair-lock="${side}" data-task="${task.id}">Upravit</button></div>`
+        : `<div class="rating-row"><input class="input" type="number" min="1" max="10" value="${escapeHtml(value)}" data-pair-value="${side}" data-task="${task.id}" ${revealed ? 'disabled' : ''}><button type="button" class="rating-lock" data-pair-lock="${side}" data-task="${task.id}" ${revealed ? 'disabled' : ''}>Zamknout</button></div>`}</div>`;
+    };
+    const bothLocked = pair.lockA && pair.lockB;
+    const result = revealed ? `<div class="rating-reveal">Moje hodnocení: ${escapeHtml(pair.valueA)} / 10 · Jeho hodnocení: ${escapeHtml(pair.valueB)} / 10${pair.valueA && pair.valueB ? ` · Rozdíl ${Math.abs(Number(pair.valueA) - Number(pair.valueB))}` : ''}</div>` : '';
+
+    return `<div class="answer-area">${(task.photos || []).map(photo => renderPhotoField(task, photo, false)).join('')}<div class="pair-rating">${slot('A', 'Moje hodnocení')}${slot('B', 'Jeho hodnocení')}</div><div class="answer-actions"><button type="button" class="small-button secret-action" data-pair-reveal data-task="${task.id}" ${bothLocked && !revealed ? '' : 'disabled'}>${revealed ? 'Odpovědi odhaleny' : 'Odhalit odpovědi společně'}</button>${revealed ? `<button type="button" class="small-button" data-pair-reset data-task="${task.id}">Zadat znovu</button>` : ''}</div>${result}</div>`;
+  }
+
+  function renderTokens(task, taskState) {
+    const tokens = Array.from({ length: 3 }, (_, index) => taskState.tokens[index] || { choice: '', used: false });
+    return `<div class="answer-area"><div class="token-list">${tokens.map((token, index) => `<div class="token-row ${token.used ? 'used' : ''}" data-token-row="${task.id}:${index}"><span class="token-number">${index + 1}</span><select class="select" data-token-choice data-task="${task.id}" data-index="${index}" ${token.used ? 'disabled' : ''}><option value="">Vyber žeton…</option>${task.tokenOptions.map(option => `<option value="${escapeHtml(option)}" ${token.choice === option ? 'selected' : ''}>${escapeHtml(option)}</option>`).join('')}</select><button type="button" class="token-use" data-token-use data-task="${task.id}" data-index="${index}">${token.used ? 'Vrátit žeton' : 'Použít žeton'}</button></div>`).join('')}</div></div>`;
+  }
+
+  function bindTaskEvents(visibleTasks) {
+    taskListEl.querySelectorAll('[data-field]').forEach(input => {
+      input.addEventListener('input', event => {
+        const taskState = getTaskState(event.target.dataset.task);
+        taskState.values[event.target.dataset.key] = event.target.value;
+        saveState();
+        updateWordCounter(event.target);
+      });
+      updateWordCounter(input);
+    });
+
+    taskListEl.querySelectorAll('[data-photo-input]').forEach(input => {
+      input.addEventListener('change', async event => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+        const taskId = event.target.dataset.task;
+        const key = event.target.dataset.key;
+        const status = document.querySelector(`[data-photo-status="${taskId}:${key}"]`);
+        if (status) status.textContent = 'Ukládám fotografii…';
+        try {
+          const blob = await compressImage(file);
+          await putPhoto(`${taskId}:${key}`, blob);
+          await showPhoto(taskId, key, blob);
+          showToast('Fotografie uložena do zařízení.');
+        } catch (error) {
+          console.error(error);
+          showToast('Fotografii se nepodařilo uložit. Zkus jiný snímek.');
+        } finally {
+          event.target.value = '';
+        }
+      });
+    });
+
+    taskListEl.querySelectorAll('[data-delete-photo]').forEach(button => {
+      button.addEventListener('click', async () => {
+        const [taskId, key] = button.dataset.deletePhoto.split(':');
+        const yes = await askConfirm({ icon: '🗑️', title: 'Smazat fotografii?', text: 'Fotografie bude odstraněna pouze z této hry.', confirm: 'Smazat' });
+        if (!yes) return;
+        await deletePhoto(`${taskId}:${key}`);
+        hidePhoto(taskId, key);
+        showToast('Fotografie smazána.');
+      });
+    });
+
+    taskListEl.querySelectorAll('[data-status]').forEach(button => {
+      button.addEventListener('click', () => {
+        const taskState = getTaskState(button.dataset.task);
+        const next = button.dataset.status;
+        taskState.status = taskState.status === next ? '' : next;
+        saveState();
+        render();
+      });
+    });
+
+    taskListEl.querySelectorAll('[data-lock-task]').forEach(button => {
+      button.addEventListener('click', async () => {
+        const taskId = button.dataset.lockTask;
+        const task = tasks.find(item => item.id === taskId);
+        const yes = await askConfirm({ icon: '🔐', title: 'Zamknout odpověď?', text: `Obsah mise „${task.title}“ se skryje. Odhalit ho půjde až po dalším potvrzení.`, confirm: 'Zamknout na večer' });
+        if (yes) {
+          getTaskState(taskId).locked = true;
+          saveState();
+          showToast('Odpověď zamčena. Klíč má večer.');
+          render();
+        }
+      });
+    });
+
+    taskListEl.querySelectorAll('[data-unlock-task]').forEach(button => {
+      button.addEventListener('click', async () => {
+        const taskId = button.dataset.unlockTask;
+        const task = tasks.find(item => item.id === taskId);
+        const yes = await askConfirm({ icon: '💌', title: 'Opravdu odhalit odpověď?', text: `Obsah mise „${task.title}“ se znovu zobrazí. Tohle je večerní tlačítko — nebo velmi sebevědomé odpolední rozhodnutí.`, confirm: 'Ano, odhalit' });
+        if (yes) {
+          getTaskState(taskId).locked = false;
+          saveState();
+          render();
+        }
+      });
+    });
+
+    taskListEl.querySelectorAll('[data-pair-value]').forEach(input => {
+      input.addEventListener('input', () => {
+        const pair = getTaskState(input.dataset.task).pair;
+        pair[`value${input.dataset.pairValue}`] = input.value;
+        saveState();
+      });
+    });
+
+    taskListEl.querySelectorAll('[data-pair-lock]').forEach(button => {
+      button.addEventListener('click', () => {
+        const pair = getTaskState(button.dataset.task).pair;
+        const side = button.dataset.pairLock;
+        if (!pair[`lock${side}`] && !pair[`value${side}`]) {
+          showToast('Nejdřív zadej hodnocení od 1 do 10.');
+          return;
+        }
+        pair[`lock${side}`] = !pair[`lock${side}`];
+        saveState();
+        render();
+      });
+    });
+
+    taskListEl.querySelectorAll('[data-pair-reveal]').forEach(button => {
+      button.addEventListener('click', async () => {
+        const taskId = button.dataset.task;
+        const yes = await askConfirm({ icon: '🥖', title: 'Odhalit obě hodnocení?', text: 'Telefon položte mezi sebe a výsledek odhalte společně.', confirm: 'Odhalit verdikt' });
+        if (yes) {
+          getTaskState(taskId).pair.revealed = true;
+          saveState();
+          render();
+        }
+      });
+    });
+
+    taskListEl.querySelectorAll('[data-pair-reset]').forEach(button => {
+      button.addEventListener('click', () => {
+        getTaskState(button.dataset.task).pair = {};
+        saveState();
+        render();
+      });
+    });
+
+    taskListEl.querySelectorAll('[data-token-choice]').forEach(select => {
+      select.addEventListener('change', () => {
+        const taskState = getTaskState(select.dataset.task);
+        const index = Number(select.dataset.index);
+        taskState.tokens[index] ||= { choice: '', used: false };
+        taskState.tokens[index].choice = select.value;
+        saveState();
+      });
+    });
+
+    taskListEl.querySelectorAll('[data-token-use]').forEach(button => {
+      button.addEventListener('click', async () => {
+        const taskState = getTaskState(button.dataset.task);
+        const index = Number(button.dataset.index);
+        taskState.tokens[index] ||= { choice: '', used: false };
+        const token = taskState.tokens[index];
+        if (!token.used && !token.choice) {
+          showToast('Nejdřív vyber, za co chceš žeton utratit.');
+          return;
+        }
+        if (!token.used) {
+          const yes = await askConfirm({ icon: '🎟️', title: `Použít žeton: ${token.choice}?`, text: 'Řekni nahlas, že používáš žeton. Pak už je to na vás dvou.', confirm: 'Použít žeton' });
+          if (!yes) return;
+          token.used = true;
+          showToast(`Žeton použit: ${token.choice}.`);
+        } else {
+          token.used = false;
+        }
+        saveState();
+        render();
+      });
+    });
+  }
+
+  function updateWordCounter(input) {
+    const max = Number(input.dataset.maxWords || 0);
+    if (!max) return;
+    const count = input.value.trim() ? input.value.trim().split(/\s+/).length : 0;
+    const counter = document.querySelector(`[data-word-counter="${input.dataset.task}:${input.dataset.key}"]`);
+    if (counter) {
+      counter.textContent = `${count} / ${max} slov`;
+      counter.classList.toggle('over', count > max);
+    }
+  }
+
+  function updateProgress() {
+    const visibleTasks = tasks.filter(task => task.section !== 'spicy' || state.spicyUnlocked);
+    const completed = visibleTasks.filter(task => getTaskState(task.id).status === 'completed').length;
+    const skipped = visibleTasks.filter(task => getTaskState(task.id).status === 'skipped').length;
+    const percent = visibleTasks.length ? Math.round((completed / visibleTasks.length) * 100) : 0;
+    overallTextEl.textContent = `${completed} splněno · ${skipped} přeskočeno`;
+    overallBarEl.style.width = `${percent}%`;
+  }
+
+  function showToast(message) {
+    clearTimeout(toastTimer);
+    toastEl.textContent = message;
+    toastEl.classList.add('show');
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2700);
+  }
+
+  function askConfirm({ icon = '🔐', title = 'Potvrzení', text = '', confirm = 'Potvrdit' }) {
+    modalIcon.textContent = icon;
+    modalTitle.textContent = title;
+    modalText.textContent = text;
+    modalConfirm.textContent = confirm;
+    modalBackdrop.classList.add('show');
+    return new Promise(resolve => { modalResolver = resolve; });
+  }
+
+  function closeModal(result) {
+    modalBackdrop.classList.remove('show');
+    if (modalResolver) modalResolver(result);
+    modalResolver = null;
+  }
+
+  modalConfirm.addEventListener('click', () => closeModal(true));
+  modalCancel.addEventListener('click', () => closeModal(false));
+  modalBackdrop.addEventListener('click', event => { if (event.target === modalBackdrop) closeModal(false); });
+  document.addEventListener('keydown', event => { if (event.key === 'Escape' && modalBackdrop.classList.contains('show')) closeModal(false); });
+
+  async function openDb() {
+    if (dbPromise) return dbPromise;
+    dbPromise = new Promise((resolve, reject) => {
+      const request = indexedDB.open(DB_NAME, DB_VERSION);
+      request.onupgradeneeded = () => {
+        const db = request.result;
+        if (!db.objectStoreNames.contains(STORE_NAME)) db.createObjectStore(STORE_NAME);
+      };
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    return dbPromise;
+  }
+
+  async function putPhoto(key, blob) {
+    const db = await openDb();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      tx.objectStore(STORE_NAME).put(blob, key);
+      tx.oncomplete = resolve;
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  async function getPhoto(key) {
+    const db = await openDb();
+    return new Promise((resolve, reject) => {
+      const request = db.transaction(STORE_NAME, 'readonly').objectStore(STORE_NAME).get(key);
+      request.onsuccess = () => resolve(request.result || null);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async function deletePhoto(key) {
+    const db = await openDb();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      tx.objectStore(STORE_NAME).delete(key);
+      tx.oncomplete = resolve;
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  async function clearPhotos() {
+    const db = await openDb();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      tx.objectStore(STORE_NAME).clear();
+      tx.oncomplete = resolve;
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  async function compressImage(file) {
+    const maxSide = 1600;
+    let bitmap;
+    try {
+      bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
+    } catch {
+      bitmap = await fileToImage(file);
+    }
+    const width = bitmap.width || bitmap.naturalWidth;
+    const height = bitmap.height || bitmap.naturalHeight;
+    const scale = Math.min(1, maxSide / Math.max(width, height));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.max(1, Math.round(width * scale));
+    canvas.height = Math.max(1, Math.round(height * scale));
+    const ctx = canvas.getContext('2d', { alpha: false });
+    ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    if (bitmap.close) bitmap.close();
+    return new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Canvas export failed')), 'image/jpeg', .84));
+  }
+
+  function fileToImage(file) {
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+      const url = URL.createObjectURL(file);
+      image.onload = () => { URL.revokeObjectURL(url); resolve(image); };
+      image.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Image decode failed')); };
+      image.src = url;
+    });
+  }
+
+  async function hydratePhotos(visibleTasks) {
+    const jobs = [];
+    for (const task of visibleTasks) {
+      for (const photo of task.photos || []) {
+        jobs.push((async () => {
+          try {
+            const blob = await getPhoto(`${task.id}:${photo.key}`);
+            if (blob) await showPhoto(task.id, photo.key, blob);
+          } catch (error) { console.warn('Photo load failed', error); }
+        })());
+      }
+    }
+    await Promise.all(jobs);
+  }
+
+  async function showPhoto(taskId, key, blob) {
+    const mapKey = `${taskId}:${key}`;
+    if (photoUrls.has(mapKey)) URL.revokeObjectURL(photoUrls.get(mapKey));
+    const url = URL.createObjectURL(blob);
+    photoUrls.set(mapKey, url);
+    const wrap = document.querySelector(`[data-photo-preview-wrap="${mapKey}"]`);
+    const image = document.querySelector(`[data-photo-preview="${mapKey}"]`);
+    const status = document.querySelector(`[data-photo-status="${mapKey}"]`);
+    if (wrap && image) {
+      image.src = url;
+      wrap.classList.add('has-photo');
+      if (status) status.textContent = 'Fotografie je uložena v zařízení.';
+    }
+  }
+
+  function hidePhoto(taskId, key) {
+    const mapKey = `${taskId}:${key}`;
+    if (photoUrls.has(mapKey)) {
+      URL.revokeObjectURL(photoUrls.get(mapKey));
+      photoUrls.delete(mapKey);
+    }
+    const wrap = document.querySelector(`[data-photo-preview-wrap="${mapKey}"]`);
+    const image = document.querySelector(`[data-photo-preview="${mapKey}"]`);
+    if (wrap) wrap.classList.remove('has-photo');
+    if (image) image.removeAttribute('src');
+  }
+
+  document.getElementById('resetButton').addEventListener('click', async () => {
+    const first = await askConfirm({ icon: '⚠️', title: 'Smazat celou hru?', text: 'Zmizí všechny texty, fotky, stav misí i tajné odpovědi. Tuto akci nejde vrátit.', confirm: 'Pokračovat' });
+    if (!first) return;
+    const second = await askConfirm({ icon: '🗑️', title: 'Opravdu úplně všechno?', text: 'Poslední kontrola. Kraków si paměť ponechá, aplikace ne.', confirm: 'Ano, smazat vše' });
+    if (!second) return;
+    state = JSON.parse(JSON.stringify(defaultState));
+    localStorage.removeItem(APP_KEY);
+    try { await clearPhotos(); } catch (error) { console.warn(error); }
+    for (const url of photoUrls.values()) URL.revokeObjectURL(url);
+    photoUrls.clear();
+    showToast('Hra byla resetována.');
+    render();
+  });
+
+  window.addEventListener('scroll', () => backTopEl.classList.toggle('show', window.scrollY > 700), { passive: true });
+  backTopEl.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  window.addEventListener('beforeunload', () => {
+    for (const url of photoUrls.values()) URL.revokeObjectURL(url);
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
