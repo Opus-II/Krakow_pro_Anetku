@@ -399,6 +399,52 @@
       white-space: pre-wrap;
     }
 
+    .anniversary-heart-burst {
+      position: fixed;
+      inset: 0;
+      z-index: 260;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      pointer-events: none;
+      visibility: hidden;
+      opacity: 0;
+      background: radial-gradient(circle, rgba(255,248,250,.9) 0%, rgba(112,31,59,.22) 48%, rgba(73,19,38,.42) 100%);
+    }
+    .anniversary-heart-burst span {
+      display: block;
+      color: var(--rose);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(12rem, 56vw, 28rem);
+      line-height: .8;
+      opacity: 0;
+      transform: scale(.25);
+      filter: drop-shadow(0 18px 42px rgba(112,31,59,.34));
+    }
+    .anniversary-heart-burst.show {
+      visibility: visible;
+      animation: anniversaryOverlay 2.6s ease forwards;
+    }
+    .anniversary-heart-burst.show span {
+      animation: anniversaryHeart 2.6s cubic-bezier(.18,.8,.24,1) forwards;
+    }
+
+    @keyframes anniversaryOverlay {
+      0% { opacity: 0; }
+      12%, 72% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    @keyframes anniversaryHeart {
+      0% { opacity: 0; transform: scale(.25) rotate(-5deg); }
+      18% { opacity: 1; transform: scale(1.03) rotate(0); }
+      34% { transform: scale(.9); }
+      48% { transform: scale(1.08); }
+      62% { transform: scale(.98); }
+      76% { opacity: 1; transform: scale(1.02); }
+      100% { opacity: 0; transform: scale(1.2); }
+    }
+
     .task-list { display: grid; gap: 13px; }
 
     .task-card {
@@ -1042,6 +1088,12 @@
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+      .anniversary-heart-burst.show { animation-duration: 1.5s; }
+      .anniversary-heart-burst.show span {
+        animation: none;
+        opacity: 1;
+        transform: scale(1);
+      }
     }
   </style>
 </head>
@@ -1092,6 +1144,7 @@
 
   <button type="button" class="back-top" id="backTop" aria-label="Zpět nahoru">↑</button>
   <div class="toast" id="toast" role="status"></div>
+  <div class="anniversary-heart-burst" id="anniversaryHeartBurst" aria-hidden="true"><span>♥</span></div>
 
   <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal">
@@ -1451,6 +1504,7 @@
   let modalResolver = null;
   let toastTimer = null;
   let anniversaryCountdownTimer = null;
+  let anniversaryHeartTimer = null;
   const photoUrls = new Map();
 
   const tabsEl = document.getElementById('tabs');
@@ -1460,6 +1514,7 @@
   const overallTextEl = document.getElementById('overallProgressText');
   const overallBarEl = document.getElementById('overallProgressBar');
   const toastEl = document.getElementById('toast');
+  const anniversaryHeartBurstEl = document.getElementById('anniversaryHeartBurst');
   const backTopEl = document.getElementById('backTop');
   const modalBackdrop = document.getElementById('modalBackdrop');
   const modalTitle = document.getElementById('modalTitle');
@@ -1684,7 +1739,8 @@
           state.anniversaryUnlocked = true;
           saveState();
           showToast('Výroční přání je odemčené.');
-          render();
+          await render();
+          showAnniversaryHeart();
         });
       }
     } else if (section.id === 'day4') {
@@ -2337,6 +2393,19 @@
     toastEl.textContent = message;
     toastEl.classList.add('show');
     toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2700);
+  }
+
+  function showAnniversaryHeart() {
+    if (!anniversaryHeartBurstEl) return;
+
+    clearTimeout(anniversaryHeartTimer);
+    anniversaryHeartBurstEl.classList.remove('show');
+    void anniversaryHeartBurstEl.offsetWidth;
+    anniversaryHeartBurstEl.classList.add('show');
+
+    anniversaryHeartTimer = setTimeout(() => {
+      anniversaryHeartBurstEl.classList.remove('show');
+    }, 2700);
   }
 
   function askConfirm({ icon = '🔐', title = 'Potvrzení', text = '', confirm = 'Potvrdit' }) {
