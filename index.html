@@ -1628,12 +1628,12 @@
   function renderAnniversaryCodeBox() {
     return `
       <div class="anniversary-code-box">
-        <label for="anniversarySecretCode">Nebo zadej tajný kód</label>
+        <label for="anniversarySecretCode">Tajný kód</label>
         <div class="anniversary-code-row">
-          <input class="input" type="password" id="anniversarySecretCode" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Tajný kód">
-          <button type="button" class="primary-button" id="unlockAnniversaryByCode">Odemknout kódem</button>
+          <input class="input" type="password" id="anniversarySecretCode" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Zadej tajný kód">
+          <button type="button" class="primary-button" id="unlockAnniversaryByCode">Odemknout vzkaz</button>
         </div>
-        <p class="anniversary-code-help">Kód Ti může prozradit jen Pavel.</p>
+        <p class="anniversary-code-help">Nápovědu nalezneš u Pavla.</p>
       </div>
     `;
   }
@@ -1733,55 +1733,46 @@
     if (section.id === 'day3') {
       const anniversaryAvailable = anniversaryIsAvailable();
 
-      if (state.anniversaryUnlocked) {
+      if (!anniversaryAvailable) {
+        if (state.anniversaryUnlocked) {
+          state.anniversaryUnlocked = false;
+          saveState();
+        }
+        specialEl.innerHTML = `
+          <div class="anniversary-card">
+            <div class="anniversary-card-content">
+              <div class="anniversary-kicker">🔒 Speciální vzkaz od Pavla</div>
+              <h3>Dnes nejde jen o Wieliczku, ale hlavně o nás ❤️</h3>
+              <p>Výroční vzkaz se zpřístupní 3. srpna. Do té doby zůstane bezpečně schovaný.</p>
+              <div class="anniversary-countdown" aria-live="polite">
+                <span>Do zpřístupnění zbývá</span>
+                <strong id="anniversaryCountdownValue">Počítám…</strong>
+              </div>
+            </div>
+          </div>
+        `;
+        startAnniversaryCountdown();
+      } else if (state.anniversaryUnlocked) {
         specialEl.innerHTML = `
           <div class="anniversary-card unlocked">
             <div class="anniversary-card-content">
-              <div class="anniversary-kicker">❤️ Speciální přání od Pavla</div>
+              <div class="anniversary-kicker">❤️ Speciální vzkaz od Pavla</div>
               <h3>Pro Anetku</h3>
               <p class="anniversary-message">❤️ MILUJU TĚ LÁSKO ❤️</p>
             </div>
           </div>
         `;
-      } else if (!anniversaryAvailable) {
-        specialEl.innerHTML = `
-          <div class="anniversary-card">
-            <div class="anniversary-card-content">
-              <div class="anniversary-kicker">🔒 Speciální přání od Pavla</div>
-              <h3>Dnes nejde jen o Wieliczku, ale hlavně o nás ❤️</h3>
-              <p>Výroční přání se odemkne 3. srpna. Do té doby zůstane schované.</p>
-              <div class="anniversary-countdown" aria-live="polite">
-                <span>Do odemknutí zbývá</span>
-                <strong id="anniversaryCountdownValue">Počítám…</strong>
-              </div>
-              ${renderAnniversaryCodeBox()}
-            </div>
-          </div>
-        `;
-        startAnniversaryCountdown();
-        bindAnniversaryCodeUnlock();
       } else {
         specialEl.innerHTML = `
           <div class="anniversary-card">
             <div class="anniversary-card-content">
-              <div class="anniversary-kicker">🔒 Speciální přání od Pavla</div>
+              <div class="anniversary-kicker">🔒 Speciální vzkaz od Pavla</div>
               <h3>Dnes nejde jen o Wieliczku, ale hlavně o nás ❤️</h3>
-              <p>Uvnitř na Tebe čeká osobní vzkaz.</p>
-              <button type="button" class="primary-button" id="unlockAnniversary">Odemknout výroční přání</button>
+              <p>Zadejte tajný kód, nápovědu nalezneš u Pavla.</p>
               ${renderAnniversaryCodeBox()}
             </div>
           </div>
         `;
-        document.getElementById('unlockAnniversary').addEventListener('click', async () => {
-          const yes = await askConfirm({
-            icon: '❤️',
-            title: 'Odemknout výroční přání?',
-            text: 'Po odemknutí se zobrazí Pavlův osobní vzkaz a zůstane otevřený.',
-            confirm: 'Odemknout přání'
-          });
-          if (!yes) return;
-          await unlockAnniversaryMessage();
-        });
         bindAnniversaryCodeUnlock();
       }
     } else if (section.id === 'day4') {
@@ -2439,7 +2430,7 @@
   async function unlockAnniversaryMessage() {
     state.anniversaryUnlocked = true;
     saveState();
-    showToast('Výroční přání je odemčené.');
+    showToast('Výroční vzkaz je odemčený.');
     await render();
     showAnniversaryHeart();
   }
@@ -2450,6 +2441,11 @@
     if (!input || !button) return;
 
     const tryUnlock = async () => {
+      if (!anniversaryIsAvailable()) {
+        showToast('Výroční vzkaz se zpřístupní až 3. srpna.');
+        return;
+      }
+
       if (normalizeAnniversaryCode(input.value) !== normalizeAnniversaryCode(ANNIVERSARY_SECRET_CODE)) {
         input.value = '';
         input.focus();
