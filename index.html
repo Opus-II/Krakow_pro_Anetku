@@ -958,7 +958,7 @@
       <div class="eyebrow">🧭 výroční hra jen pro Anetku</div>
       <h1>Cesta čtvrtého draka 🐉</h1>
       <p class="hero-subtitle">Tři už máš. Čtvrtý na Tebe čeká v Krakově.</p>
-      <div class="hero-note"><span>💌</span><span>Anetko, nemusíš splnit všechno. Vybírej si úkoly podle nálady — hlavní je, abychom si náš výlet užili spolu na maximum.</span></div>
+      <div class="hero-note"><span>💌</span><span>Nemusíš splnit všechno. Vybírej si úkoly podle nálady — hlavní je, abychom si náš výlet užili na maximum.</span></div>
       <div class="overall-progress">
         <div class="progress-head"><span>Celý výlet</span><span id="overallProgressText">0 splněno</span></div>
         <div class="progress-track"><div class="progress-bar" id="overallProgressBar"></div></div>
@@ -1024,7 +1024,7 @@
   const sections = [
     { id: 'day1', icon: '✈️', tab: 'Den 1', kicker: 'Přílet · centrum · galerie', title: 'První setkání s Krakovem', description: 'První polština, Rynek, Sukiennice, bazilika a galerie.' },
     { id: 'day2', icon: '🐉', tab: 'Den 2', kicker: 'Wawel · Kazimierz · Podgórze', title: 'Králové, drak, Anetka a Pavel', description: 'Největší balíček úkolů. Vyber si jen ty, které se zrovna hodí.' },
-    { id: 'day3', icon: '🧂', tab: 'Den 3', kicker: 'Wieliczka', title: 'Sůl, schody a jedna pravda', description: 'Podzemní úkoly, přání a otázka, která počká na povrch.' },
+    { id: 'day3', icon: '🧂', tab: 'Den 3', kicker: 'Wieliczka', title: 'Sůl, schody a jedna pravda', description: 'Podzemní úkoly, společná fotografie, přání a otázka, která počká na povrch.' },
     { id: 'day4', icon: '🕯️', tab: 'Den 4', kicker: 'Osvětim', title: 'Režim ticha', description: 'Tady hra ustupuje. Oba úkoly otevři až po odjezdu, v klidu a bez spěchu.' },
     { id: 'day5', icon: '🧳', tab: 'Den 5', kicker: 'Ohlédnutí · cesta domů', title: 'Co si z Krakova odvážíš', description: 'Krátké ohlédnutí za tím nejlepším, nejchutnějším a tím, co by příště mohlo být jinak.' },
     { id: 'trip', icon: '🧭', tab: 'Celý výlet', kicker: 'Univerzální úkoly', title: 'Kdykoli cestou', description: 'Jídlo, fotografie, navigace a drobné momenty, které nejsou vázané na jedinou zastávku.' },
@@ -1174,6 +1174,11 @@
         { type: 'textarea', key: 'actual', label: 'Co si skutečně vybral Pavel', placeholder: 'Pavlův skutečný favorit…' },
         { type: 'select', key: 'accuracy', label: 'Jak přesný byl můj odhad?', options: ['', 'Trefila jsem se', 'Byla jsem blízko', 'Vůbec jsem se netrefila'] }
       ]
+    },
+    {
+      id: 'd3-photo', section: 'day3', icon: '📷', title: 'Podzemní fotografie bez památky', place: 'Wieliczka',
+      instructions: `<p>Vyfoť společnou fotografii Tebe a Pavla, na které nebude hlavním motivem kaple, socha ani jiná atrakce.</p><p>Hlavní máte být vy dva a atmosféra místa.</p>`,
+      photos: [{ key: 'photo', label: 'Naše podzemní fotografie' }]
     },
     {
       id: 'd3-22', section: 'day3', icon: '❓', title: '800 schodů, jedna pravda', place: 'Wieliczka', secret: true,
