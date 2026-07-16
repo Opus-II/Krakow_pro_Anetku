@@ -399,6 +399,35 @@
       white-space: pre-wrap;
     }
 
+    .anniversary-code-box {
+      display: grid;
+      gap: 9px;
+      margin-top: 13px;
+      padding: 13px 14px;
+      border: 1px solid rgba(112,31,59,.16);
+      border-radius: 14px;
+      background: rgba(255,255,255,.68);
+    }
+    .anniversary-code-box label {
+      color: var(--wine-dark);
+      font-size: .82rem;
+      font-weight: 850;
+    }
+    .anniversary-code-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+    }
+    .anniversary-code-row .primary-button {
+      margin-top: 0;
+      white-space: nowrap;
+    }
+    .anniversary-code-help {
+      margin: 0 !important;
+      color: var(--muted) !important;
+      font-size: .78rem;
+    }
+
     .anniversary-heart-burst {
       position: fixed;
       inset: 0;
@@ -423,25 +452,25 @@
     }
     .anniversary-heart-burst.show {
       visibility: visible;
-      animation: anniversaryOverlay 2.6s ease forwards;
+      animation: anniversaryOverlay 5s ease forwards;
     }
     .anniversary-heart-burst.show span {
-      animation: anniversaryHeart 2.6s cubic-bezier(.18,.8,.24,1) forwards;
+      animation: anniversaryHeart 5s cubic-bezier(.18,.8,.24,1) forwards;
     }
 
     @keyframes anniversaryOverlay {
       0% { opacity: 0; }
-      12%, 72% { opacity: 1; }
+      8%, 82% { opacity: 1; }
       100% { opacity: 0; }
     }
 
     @keyframes anniversaryHeart {
       0% { opacity: 0; transform: scale(.25) rotate(-5deg); }
-      18% { opacity: 1; transform: scale(1.03) rotate(0); }
-      34% { transform: scale(.9); }
-      48% { transform: scale(1.08); }
-      62% { transform: scale(.98); }
-      76% { opacity: 1; transform: scale(1.02); }
+      12% { opacity: 1; transform: scale(1.03) rotate(0); }
+      24% { transform: scale(.9); }
+      36% { transform: scale(1.08); }
+      48% { transform: scale(.98); }
+      82% { opacity: 1; transform: scale(1.02); }
       100% { opacity: 0; transform: scale(1.2); }
     }
 
@@ -1084,6 +1113,7 @@
       .modal-actions { grid-template-columns: 1fr; }
       .token-row { grid-template-columns: auto 1fr; }
       .token-use { grid-column: 1 / -1; }
+      .anniversary-code-row { grid-template-columns: 1fr; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1168,6 +1198,8 @@
   const STORE_NAME = 'photos';
   // Odemčení podle místního data a času nastaveného v telefonu.
   const ANNIVERSARY_UNLOCK_AT = new Date(2026, 7, 3, 0, 0, 0);
+  // Tajný kód pro předčasné odemčení. Pavel ho může Anetce sdělit osobně.
+  const ANNIVERSARY_SECRET_CODE = 'DRAK4';
 
   const sections = [
     { id: 'day1', icon: '✈️', tab: 'Den 1', kicker: 'Přílet · centrum · galerie', title: 'První setkání s Krakovem', description: 'První polština, Rynek, Sukiennice, bazilika a galerie.' },
@@ -1589,6 +1621,23 @@
     return Date.now() >= ANNIVERSARY_UNLOCK_AT.getTime();
   }
 
+  function normalizeAnniversaryCode(value) {
+    return String(value || '').trim().toLocaleUpperCase('cs');
+  }
+
+  function renderAnniversaryCodeBox() {
+    return `
+      <div class="anniversary-code-box">
+        <label for="anniversarySecretCode">Nebo zadej tajný kód</label>
+        <div class="anniversary-code-row">
+          <input class="input" type="password" id="anniversarySecretCode" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Tajný kód">
+          <button type="button" class="primary-button" id="unlockAnniversaryByCode">Odemknout kódem</button>
+        </div>
+        <p class="anniversary-code-help">Kód Ti může prozradit jen Pavel.</p>
+      </div>
+    `;
+  }
+
   function czechCount(value, one, few, many) {
     const mod10 = value % 10;
     const mod100 = value % 100;
@@ -1684,7 +1733,7 @@
     if (section.id === 'day3') {
       const anniversaryAvailable = anniversaryIsAvailable();
 
-      if (state.anniversaryUnlocked && anniversaryAvailable) {
+      if (state.anniversaryUnlocked) {
         specialEl.innerHTML = `
           <div class="anniversary-card unlocked">
             <div class="anniversary-card-content">
@@ -1705,11 +1754,12 @@
                 <span>Do odemknutí zbývá</span>
                 <strong id="anniversaryCountdownValue">Počítám…</strong>
               </div>
-              <button type="button" class="primary-button" disabled>🔒 Odemkne se 3. 8.</button>
+              ${renderAnniversaryCodeBox()}
             </div>
           </div>
         `;
         startAnniversaryCountdown();
+        bindAnniversaryCodeUnlock();
       } else {
         specialEl.innerHTML = `
           <div class="anniversary-card">
@@ -1718,16 +1768,11 @@
               <h3>Dnes nejde jen o Wieliczku, ale hlavně o nás ❤️</h3>
               <p>Uvnitř na Tebe čeká osobní vzkaz.</p>
               <button type="button" class="primary-button" id="unlockAnniversary">Odemknout výroční přání</button>
+              ${renderAnniversaryCodeBox()}
             </div>
           </div>
         `;
         document.getElementById('unlockAnniversary').addEventListener('click', async () => {
-          if (!anniversaryIsAvailable()) {
-            showToast('Výroční přání se odemkne 3. srpna.');
-            renderHeader();
-            return;
-          }
-
           const yes = await askConfirm({
             icon: '❤️',
             title: 'Odemknout výroční přání?',
@@ -1735,13 +1780,9 @@
             confirm: 'Odemknout přání'
           });
           if (!yes) return;
-
-          state.anniversaryUnlocked = true;
-          saveState();
-          showToast('Výroční přání je odemčené.');
-          await render();
-          showAnniversaryHeart();
+          await unlockAnniversaryMessage();
         });
+        bindAnniversaryCodeUnlock();
       }
     } else if (section.id === 'day4') {
       specialEl.innerHTML = `<div class="silence-card"><strong>V areálu se žádné úkoly neplní.</strong>Obě karty otevři až po odjezdu, v klidu a bez spěchu.</div>`;
@@ -2395,6 +2436,40 @@
     toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2700);
   }
 
+  async function unlockAnniversaryMessage() {
+    state.anniversaryUnlocked = true;
+    saveState();
+    showToast('Výroční přání je odemčené.');
+    await render();
+    showAnniversaryHeart();
+  }
+
+  function bindAnniversaryCodeUnlock() {
+    const input = document.getElementById('anniversarySecretCode');
+    const button = document.getElementById('unlockAnniversaryByCode');
+    if (!input || !button) return;
+
+    const tryUnlock = async () => {
+      if (normalizeAnniversaryCode(input.value) !== normalizeAnniversaryCode(ANNIVERSARY_SECRET_CODE)) {
+        input.value = '';
+        input.focus();
+        showToast('Tajný kód nesedí. Zkus to znovu.');
+        return;
+      }
+
+      button.disabled = true;
+      await unlockAnniversaryMessage();
+    };
+
+    button.addEventListener('click', tryUnlock);
+    input.addEventListener('keydown', event => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        tryUnlock();
+      }
+    });
+  }
+
   function showAnniversaryHeart() {
     if (!anniversaryHeartBurstEl) return;
 
@@ -2405,7 +2480,7 @@
 
     anniversaryHeartTimer = setTimeout(() => {
       anniversaryHeartBurstEl.classList.remove('show');
-    }, 2700);
+    }, 5000);
   }
 
   function askConfirm({ icon = '🔐', title = 'Potvrzení', text = '', confirm = 'Potvrdit' }) {
