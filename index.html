@@ -1196,9 +1196,14 @@
   const DB_NAME = 'krakow-pro-anetku-photos';
   const DB_VERSION = 1;
   const STORE_NAME = 'photos';
+  // TESTOVACÍ PŘEPÍNAČ:
+  // false = běžný režim, do 3. 8. se ukazuje pouze odpočet
+  // true  = testovací režim, pole pro tajný kód se zobrazí okamžitě
+  const ANNIVERSARY_TEST_MODE = false;
+
   // Odemčení podle místního data a času nastaveného v telefonu.
   const ANNIVERSARY_UNLOCK_AT = new Date(2026, 7, 3, 0, 0, 0);
-  // Tajný kód pro předčasné odemčení. Pavel ho může Anetce sdělit osobně.
+  // Tajný kód pro odemčení výročního vzkazu.
   const ANNIVERSARY_SECRET_CODE = 'DRAK4';
 
   const sections = [
@@ -1618,7 +1623,7 @@
   }
 
   function anniversaryIsAvailable() {
-    return Date.now() >= ANNIVERSARY_UNLOCK_AT.getTime();
+    return ANNIVERSARY_TEST_MODE || Date.now() >= ANNIVERSARY_UNLOCK_AT.getTime();
   }
 
   function normalizeAnniversaryCode(value) {
