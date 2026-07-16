@@ -806,6 +806,12 @@
       font-size: .83rem;
       font-weight: 760;
     }
+    .completion-time {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: .75rem;
+      text-align: right;
+    }
 
     .dragon-options {
       display: grid;
@@ -1292,7 +1298,7 @@
     },
     {
       id: 'd1-03', section: 'day1', icon: '📸', title: 'Náměstí jedním záběrem', place: 'Rynek Główny / bazilika Panny Marie',
-      instructions: `<p>Pořiď fotografii, na které budou současně alespoň tři z následujících věcí:</p><ul><li>bazilika Panny Marie,</li><li>Sukiennice,</li><li>kočár nebo kočárek,</li><li>holub,</li><li>věž radnice,</li><li>Pavel</li></ul><p>Pavel je ten nejvzácnější krakokowský exponát.</p>`,
+      instructions: `<p>Pořiď fotografii, na které budou současně alespoň tři z následujících věcí:</p><ul><li>bazilika Panny Marie,</li><li>Sukiennice,</li><li>kočár nebo kočárek,</li><li>holub,</li><li>věž radnice,</li><li>Pavel</li></ul><p>Pavel je ten nejvzácnější krakovský exponát.</p>`,
       photos: [{ key: 'photo', label: 'Fotografie náměstí' }]
     },
     {
@@ -1644,7 +1650,7 @@
 
   function getTaskState(taskId) {
     if (!state.taskData[taskId]) {
-      state.taskData[taskId] = { values: {}, status: '', locked: false, editing: false, pair: {}, tokens: [], dragon: {}, beers: [] };
+      state.taskData[taskId] = { values: {}, status: '', completedAt: '', locked: false, editing: false, pair: {}, tokens: [], dragon: {}, beers: [] };
     }
     const item = state.taskData[taskId];
     item.values ||= {};
@@ -1652,6 +1658,7 @@
     item.tokens ||= [];
     item.dragon ||= {};
     item.beers ||= [];
+    item.completedAt = typeof item.completedAt === 'string' ? item.completedAt : '';
     item.editing = Boolean(item.editing);
 
     // Převod případných starších odpovědí u úkolu „Drak rozhodne“.
@@ -1680,6 +1687,15 @@
 
   function spiceText(level) {
     return level ? Array.from({ length: level }, () => '🌶️').join(' ') : '';
+  }
+
+  function formatCompletionTime(value) {
+    if (!value) return '';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '';
+    const datePart = date.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'numeric', year: 'numeric' });
+    const timePart = date.toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' });
+    return `${datePart} v ${timePart}`;
   }
 
   function anniversaryIsAvailable() {
@@ -1833,7 +1849,7 @@
             <div class="anniversary-card-content">
               <div class="anniversary-kicker">🔒 Speciální vzkaz od Pavla</div>
               <h3>Dnes nejde jen o Wieliczku, ale hlavně o nás ❤️</h3>
-              <p>Zadejte tajný kód, nápovědu nalezneš u Pavla.</p>
+              <p>Zadej tajný kód. Nápovědu najdeš u Pavla.</p>
               ${renderAnniversaryCodeBox()}
             </div>
           </div>
@@ -1933,6 +1949,9 @@
         : `<button type="button" class="status-button complete active" data-status="completed" data-task="${task.id}">✓ Splněno</button>
            <button type="button" class="status-button edit" data-edit-task="${task.id}">✏️ Upravit odpověď</button>`
       : `<button type="button" class="status-button complete" data-status="completed" data-task="${task.id}">✓ Splněno</button>`;
+    const completionTimeHtml = isCompleted && taskState.completedAt
+      ? `<div class="completion-time">Splněno ${escapeHtml(formatCompletionTime(taskState.completedAt))}</div>`
+      : '';
 
     return `
       <details class="task-card ${task.section === 'spicy' ? 'spicy' : ''} ${statusClass} ${isEditing ? 'editing' : ''}" data-task-card="${task.id}" ${isEditing ? 'open' : ''}>
@@ -1952,6 +1971,7 @@
           <div class="task-footer">
             ${footerHtml}
           </div>
+          ${completionTimeHtml}
         </div>
       </details>
     `;
@@ -2306,11 +2326,17 @@
           });
           if (!yes) return;
           taskState.status = '';
+          taskState.completedAt = '';
           taskState.editing = false;
         } else {
           taskState.status = taskState.status === next ? '' : next;
           taskState.editing = false;
-          if (next === 'completed') showToast('Úkol je označený jako splněný.');
+          if (taskState.status === 'completed') {
+            taskState.completedAt = new Date().toISOString();
+            showToast('Úkol je označený jako splněný.');
+          } else {
+            taskState.completedAt = '';
+          }
         }
 
         saveState();
@@ -2773,6 +2799,9 @@
       ? renderDiarySpecialAnswers(task, taskState)
       : renderDiaryRegularAnswers(task, taskState);
     const photoHtml = renderDiaryPhotos(task, photos);
+    const completionTimeHtml = taskState.status === 'completed' && taskState.completedAt
+      ? `<p class="diary-completed-at">Splněno ${escapeHtml(formatCompletionTime(taskState.completedAt))}</p>`
+      : '';
 
     return `
       <article class="diary-task">
@@ -2784,6 +2813,7 @@
           </div>
           ${status}
         </header>
+        ${completionTimeHtml}
         <div class="diary-instructions">${task.instructions}</div>
         ${answers ? `<div class="diary-answers">${answers}</div>` : ''}
         ${photoHtml}
@@ -2847,6 +2877,7 @@
     .diary-task-title-row { display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
     .diary-task h3 { margin:0; font-size:1.08rem; }
     .diary-place { margin:3px 0 0; color:var(--muted); font-size:.82rem; }
+    .diary-completed-at { margin:7px 0 0; color:var(--muted); font-size:.74rem; text-align:right; }
     .diary-status,.diary-badge { display:inline-flex; padding:4px 8px; border-radius:999px; color:var(--wine); background:#f7ecd7; font-size:.72rem; font-weight:850; white-space:nowrap; }
     .diary-status.completed { color:#246342; background:#e8f6ee; }
     .diary-badge.spicy { color:#6f1d16; background:#ffe1d7; }
