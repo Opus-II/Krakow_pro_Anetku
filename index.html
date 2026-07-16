@@ -318,7 +318,6 @@
       transition: border-color .2s ease, transform .2s ease, opacity .2s ease;
     }
     .task-card[open] { border-color: rgba(112,31,59,.31); }
-    .task-card.completed { border-color: rgba(40,123,85,.42); }
     .task-card.skipped { opacity: .67; }
     .task-card.spicy {
       border-color: rgba(179,58,36,.22);
@@ -326,6 +325,22 @@
         radial-gradient(circle at 100% 0%, rgba(179,58,36,.10), transparent 14rem),
         var(--paper);
     }
+    .task-card.completed,
+    .task-card.spicy.completed {
+      border-color: rgba(40,123,85,.55);
+      background:
+        radial-gradient(circle at 100% 0%, rgba(40,123,85,.16), transparent 15rem),
+        linear-gradient(145deg, rgba(232,246,238,.98), rgba(251,255,252,.98));
+      box-shadow: 0 9px 24px rgba(40,123,85,.14);
+    }
+    .task-card.completed[open] { border-color: rgba(40,123,85,.72); }
+    .task-card.completed .task-summary { background: rgba(232,246,238,.58); }
+    .task-card.completed .task-number { color: var(--green); }
+    .task-card.completed.editing {
+      border-color: rgba(200,149,67,.62);
+      box-shadow: 0 9px 24px rgba(200,149,67,.16);
+    }
+    .task-card.completed.editing .task-summary { background: rgba(247,236,215,.56); }
 
     .task-summary {
       display: flex;
@@ -350,7 +365,11 @@
       box-shadow: inset 0 0 0 1px rgba(112,31,59,.05);
     }
     .spicy .task-icon { background: linear-gradient(145deg, #ffe0d6, #fff7f3); }
-    .completed .task-icon { background: var(--green-light); }
+    .completed .task-icon {
+      color: var(--green);
+      background: #d9f1e3;
+      box-shadow: inset 0 0 0 1px rgba(40,123,85,.16);
+    }
 
     .task-heading { flex: 1; min-width: 0; }
     .task-title-row {
@@ -459,7 +478,17 @@
       border-color: var(--rose);
       box-shadow: 0 0 0 4px rgba(201,79,114,.12);
     }
-    .input[disabled], .textarea[disabled], .select[disabled] { opacity: .75; }
+    .input[disabled], .textarea[disabled], .select[disabled] {
+      opacity: .78;
+      color: #46564d;
+      background: rgba(247,251,248,.92);
+      cursor: not-allowed;
+    }
+    button:disabled, .photo-button.is-disabled {
+      opacity: .52;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
     .word-counter {
       margin-top: 5px;
       text-align: right;
@@ -601,6 +630,28 @@
       color: #665d61;
       background: #eee9e7;
       border-color: rgba(90,80,84,.25);
+    }
+    .status-button.edit {
+      color: #6d4a12;
+      border-color: rgba(200,149,67,.42);
+      background: #fff8e9;
+    }
+    .status-button.save-edit {
+      grid-column: 1 / -1;
+      color: #fff;
+      border-color: transparent;
+      background: linear-gradient(135deg, #226b49, var(--green));
+      box-shadow: 0 7px 17px rgba(40,123,85,.18);
+    }
+    .completed-note {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border: 1px solid rgba(40,123,85,.24);
+      border-radius: 13px;
+      color: #246342;
+      background: rgba(232,246,238,.78);
+      font-size: .83rem;
+      font-weight: 760;
     }
 
     .pair-rating {
@@ -841,12 +892,14 @@
     <details class="info-card">
       <summary><span>💡</span><span>Jak hra funguje</span></summary>
       <div class="info-body">
-        <p>Úkoly se ukládají automaticky přímo v tomto zařízení. Fotky, texty i zamčené odpovědi zůstávají jen v prohlížeči.</p>
+        <p>Všechno se ukládá samo — rozepsané odpovědi, splněné mise i fotky na Tebe počkají v tomhle zařízení.</p>
         <ul>
-          <li><strong>Splněno</strong> označ jen tehdy, když máš chuť. Žádné body, žádný stres.</li>
-          <li><strong>Přeskočit</strong> znamená „dnes ne“ — žádný dluh vůči krakovskému drakovi.</li>
-          <li>U tajných odpovědí klikni na <strong>Zamknout na večer</strong>. Odhalení proběhne až po potvrzení.</li>
-          <li>Tajné mise se zobrazí teprve po ručním odemknutí.</li>
+          <li><strong>Úkoly můžeš plnit na přeskáčku.</strong> Otevři si zrovna ten, na který je čas a nálada, a k ostatním se klidně vrať později.</li>
+          <li>Když se Ti některá mise nehodí, dej <strong>Přeskočit</strong>. Třeba se k ní vrátíš jindy, třeba ne — krakovský drak to přežije.</li>
+          <li>Po klepnutí na <strong>Splněno</strong> se úkol zazelená a odpověď se zamkne proti nechtěnému přepsání.</li>
+          <li>Potřebuješ něco opravit? Použij <strong>Upravit odpověď</strong> a potvrď, že ji opravdu chceš znovu otevřít.</li>
+          <li>U tajných odpovědí použij <strong>Zamknout na večer</strong>. Znovu se ukážou až po potvrzení odhalení.</li>
+          <li><strong>Tajné mise</strong> se zobrazí až po ručním odemknutí jejich záložky.</li>
         </ul>
       </div>
     </details>
@@ -1223,12 +1276,13 @@
 
   function getTaskState(taskId) {
     if (!state.taskData[taskId]) {
-      state.taskData[taskId] = { values: {}, status: '', locked: false, pair: {}, tokens: [] };
+      state.taskData[taskId] = { values: {}, status: '', locked: false, editing: false, pair: {}, tokens: [] };
     }
     const item = state.taskData[taskId];
     item.values ||= {};
     item.pair ||= {};
     item.tokens ||= [];
+    item.editing = Boolean(item.editing);
     return item;
   }
 
@@ -1337,22 +1391,33 @@
 
   function renderTaskCard(task) {
     const taskState = getTaskState(task.id);
-    const statusClass = taskState.status === 'completed' ? 'completed' : taskState.status === 'skipped' ? 'skipped' : '';
+    const isCompleted = taskState.status === 'completed';
+    const isEditing = isCompleted && taskState.editing;
+    const readOnly = isCompleted && !isEditing;
+    const statusClass = isCompleted ? 'completed' : taskState.status === 'skipped' ? 'skipped' : '';
     const badges = [
       task.spice ? `<span class="spice-badge">${spiceText(task.spice)}</span>` : '',
       task.secret ? `<span class="secret-badge">🔒 lze zamknout</span>` : ''
     ].join('');
 
     const answerHtml = task.special === 'ratingPair'
-      ? renderRatingPair(task, taskState)
+      ? renderRatingPair(task, taskState, readOnly)
       : task.special === 'tokens'
-        ? renderTokens(task, taskState)
-        : renderRegularAnswers(task, taskState);
+        ? renderTokens(task, taskState, readOnly)
+        : renderRegularAnswers(task, taskState, readOnly);
+
+    const footerHtml = isCompleted
+      ? isEditing
+        ? `<button type="button" class="status-button save-edit" data-save-edit="${task.id}">✓ Uložit úpravy</button>`
+        : `<button type="button" class="status-button complete active" data-status="completed" data-task="${task.id}">✓ Splněno</button>
+           <button type="button" class="status-button edit" data-edit-task="${task.id}">✏️ Upravit odpověď</button>`
+      : `<button type="button" class="status-button complete" data-status="completed" data-task="${task.id}">✓ Splněno</button>
+         <button type="button" class="status-button skip ${taskState.status === 'skipped' ? 'active' : ''}" data-status="skipped" data-task="${task.id}">Přeskočit</button>`;
 
     return `
-      <details class="task-card ${task.section === 'spicy' ? 'spicy' : ''} ${statusClass}" data-task-card="${task.id}">
+      <details class="task-card ${task.section === 'spicy' ? 'spicy' : ''} ${statusClass} ${isEditing ? 'editing' : ''}" data-task-card="${task.id}" ${isEditing ? 'open' : ''}>
         <summary class="task-summary">
-          <div class="task-icon">${taskState.status === 'completed' ? '✓' : task.icon}</div>
+          <div class="task-icon">${isCompleted ? '✓' : task.icon}</div>
           <div class="task-heading">
             <div class="task-title-row">
               <span class="task-number">Mise ${task.number}</span>${badges}
@@ -1366,32 +1431,33 @@
           <div class="task-instructions">${task.instructions}</div>
           ${answerHtml}
           <div class="task-footer">
-            <button type="button" class="status-button complete ${taskState.status === 'completed' ? 'active' : ''}" data-status="completed" data-task="${task.id}">✓ Splněno</button>
-            <button type="button" class="status-button skip ${taskState.status === 'skipped' ? 'active' : ''}" data-status="skipped" data-task="${task.id}">Přeskočit</button>
+            ${footerHtml}
           </div>
         </div>
       </details>
     `;
   }
 
-  function renderRegularAnswers(task, taskState) {
-    const locked = Boolean(taskState.locked);
-    const photos = (task.photos || []).map(photo => renderPhotoField(task, photo, locked)).join('');
-    const fields = (task.fields || []).map(field => renderField(task, field, taskState.values[field.key], locked)).join('');
-    const lockActions = task.secret ? `
+  function renderRegularAnswers(task, taskState, readOnly = false) {
+    const secretLocked = Boolean(taskState.locked);
+    const controlsDisabled = secretLocked || readOnly;
+    const photos = (task.photos || []).map(photo => renderPhotoField(task, photo, controlsDisabled)).join('');
+    const fields = (task.fields || []).map(field => renderField(task, field, taskState.values[field.key], controlsDisabled)).join('');
+    const lockActions = task.secret && !readOnly ? `
       <div class="answer-actions">
-        ${locked
+        ${secretLocked
           ? ''
           : `<button type="button" class="small-button secret-action" data-lock-task="${task.id}">🔒 Zamknout na večer</button>`}
       </div>
     ` : '';
 
     return `
-      <div class="answer-area ${locked ? 'hidden' : ''}" data-answer-area="${task.id}">
+      <div class="answer-area ${secretLocked ? 'hidden' : ''}" data-answer-area="${task.id}">
         ${photos}${fields}${lockActions}
+        ${readOnly ? '<div class="completed-note">✓ Odpověď je uložená. Pro změnu použij dole „Upravit odpověď“.</div>' : ''}
       </div>
       ${task.secret ? `
-        <div class="locked-answer ${locked ? 'show' : ''}" data-locked-area="${task.id}">
+        <div class="locked-answer ${secretLocked ? 'show' : ''}" data-locked-area="${task.id}">
           <div class="lock-icon">🔐</div>
           <strong>Odpověď je zamčená</strong>
           <p>Obsah se zobrazí až po ručním potvrzení. Žádný časovač, žádné podvádění s hodinkami.</p>
@@ -1419,14 +1485,15 @@
 
   function renderPhotoField(task, photo, locked) {
     const uid = `${task.id}-${photo.key}`;
+    const disabledClass = locked ? 'is-disabled' : '';
     return `
       <div class="photo-box" data-photo-box="${task.id}:${photo.key}">
         <span class="photo-title">${escapeHtml(photo.label)}</span>
         <div class="photo-actions">
           <input class="photo-input" type="file" accept="image/*" capture="environment" id="camera-${uid}" data-photo-input data-task="${task.id}" data-key="${photo.key}" ${locked ? 'disabled' : ''}>
-          <label class="photo-button" for="camera-${uid}">📷 Vyfotit</label>
+          <label class="photo-button ${disabledClass}" for="camera-${uid}" ${locked ? 'aria-disabled="true"' : ''}>📷 Vyfotit</label>
           <input class="photo-input" type="file" accept="image/*" id="gallery-${uid}" data-photo-input data-task="${task.id}" data-key="${photo.key}" ${locked ? 'disabled' : ''}>
-          <label class="photo-button alt" for="gallery-${uid}">🖼️ Vybrat z galerie</label>
+          <label class="photo-button alt ${disabledClass}" for="gallery-${uid}" ${locked ? 'aria-disabled="true"' : ''}>🖼️ Vybrat z galerie</label>
         </div>
         <div class="photo-preview-wrap" data-photo-preview-wrap="${task.id}:${photo.key}">
           <img class="photo-preview" alt="Náhled fotografie" data-photo-preview="${task.id}:${photo.key}">
@@ -1436,25 +1503,25 @@
     `;
   }
 
-  function renderRatingPair(task, taskState) {
+  function renderRatingPair(task, taskState, readOnly = false) {
     const pair = taskState.pair || {};
     const revealed = Boolean(pair.revealed);
     const slot = (side, label) => {
       const locked = Boolean(pair[`lock${side}`]);
       const value = pair[`value${side}`] ?? '';
       return `<div class="rating-slot"><h4>${label}</h4>${locked && !revealed
-        ? `<div class="rating-hidden">🔒 Hodnocení zamčeno <button type="button" class="small-button" style="margin-left:6px;min-height:34px;padding:5px 8px" data-pair-lock="${side}" data-task="${task.id}">Upravit</button></div>`
-        : `<div class="rating-row"><input class="input" type="number" min="1" max="10" value="${escapeHtml(value)}" data-pair-value="${side}" data-task="${task.id}" ${revealed ? 'disabled' : ''}><button type="button" class="rating-lock" data-pair-lock="${side}" data-task="${task.id}" ${revealed ? 'disabled' : ''}>Zamknout</button></div>`}</div>`;
+        ? `<div class="rating-hidden">🔒 Hodnocení zamčeno <button type="button" class="small-button" style="margin-left:6px;min-height:34px;padding:5px 8px" data-pair-lock="${side}" data-task="${task.id}" ${readOnly ? 'disabled' : ''}>Upravit</button></div>`
+        : `<div class="rating-row"><input class="input" type="number" min="1" max="10" value="${escapeHtml(value)}" data-pair-value="${side}" data-task="${task.id}" ${revealed || readOnly ? 'disabled' : ''}><button type="button" class="rating-lock" data-pair-lock="${side}" data-task="${task.id}" ${revealed || readOnly ? 'disabled' : ''}>Zamknout</button></div>`}</div>`;
     };
     const bothLocked = pair.lockA && pair.lockB;
     const result = revealed ? `<div class="rating-reveal">Moje hodnocení: ${escapeHtml(pair.valueA)} / 10 · Jeho hodnocení: ${escapeHtml(pair.valueB)} / 10${pair.valueA && pair.valueB ? ` · Rozdíl ${Math.abs(Number(pair.valueA) - Number(pair.valueB))}` : ''}</div>` : '';
 
-    return `<div class="answer-area">${(task.photos || []).map(photo => renderPhotoField(task, photo, false)).join('')}<div class="pair-rating">${slot('A', 'Moje hodnocení')}${slot('B', 'Jeho hodnocení')}</div><div class="answer-actions"><button type="button" class="small-button secret-action" data-pair-reveal data-task="${task.id}" ${bothLocked && !revealed ? '' : 'disabled'}>${revealed ? 'Odpovědi odhaleny' : 'Odhalit odpovědi společně'}</button>${revealed ? `<button type="button" class="small-button" data-pair-reset data-task="${task.id}">Zadat znovu</button>` : ''}</div>${result}</div>`;
+    return `<div class="answer-area">${(task.photos || []).map(photo => renderPhotoField(task, photo, readOnly)).join('')}<div class="pair-rating">${slot('A', 'Moje hodnocení')}${slot('B', 'Jeho hodnocení')}</div><div class="answer-actions"><button type="button" class="small-button secret-action" data-pair-reveal data-task="${task.id}" ${bothLocked && !revealed && !readOnly ? '' : 'disabled'}>${revealed ? 'Odpovědi odhaleny' : 'Odhalit odpovědi společně'}</button>${revealed ? `<button type="button" class="small-button" data-pair-reset data-task="${task.id}" ${readOnly ? 'disabled' : ''}>Zadat znovu</button>` : ''}</div>${result}${readOnly ? '<div class="completed-note">✓ Hodnocení je uložené. Pro změnu použij dole „Upravit odpověď“.</div>' : ''}</div>`;
   }
 
-  function renderTokens(task, taskState) {
+  function renderTokens(task, taskState, readOnly = false) {
     const tokens = Array.from({ length: 3 }, (_, index) => taskState.tokens[index] || { choice: '', used: false });
-    return `<div class="answer-area"><div class="token-list">${tokens.map((token, index) => `<div class="token-row ${token.used ? 'used' : ''}" data-token-row="${task.id}:${index}"><span class="token-number">${index + 1}</span><select class="select" data-token-choice data-task="${task.id}" data-index="${index}" ${token.used ? 'disabled' : ''}><option value="">Vyber žeton…</option>${task.tokenOptions.map(option => `<option value="${escapeHtml(option)}" ${token.choice === option ? 'selected' : ''}>${escapeHtml(option)}</option>`).join('')}</select><button type="button" class="token-use" data-token-use data-task="${task.id}" data-index="${index}">${token.used ? 'Vrátit žeton' : 'Použít žeton'}</button></div>`).join('')}</div></div>`;
+    return `<div class="answer-area"><div class="token-list">${tokens.map((token, index) => `<div class="token-row ${token.used ? 'used' : ''}" data-token-row="${task.id}:${index}"><span class="token-number">${index + 1}</span><select class="select" data-token-choice data-task="${task.id}" data-index="${index}" ${token.used || readOnly ? 'disabled' : ''}><option value="">Vyber žeton…</option>${task.tokenOptions.map(option => `<option value="${escapeHtml(option)}" ${token.choice === option ? 'selected' : ''}>${escapeHtml(option)}</option>`).join('')}</select><button type="button" class="token-use" data-token-use data-task="${task.id}" data-index="${index}" ${readOnly ? 'disabled' : ''}>${token.used ? 'Vrátit žeton' : 'Použít žeton'}</button></div>`).join('')}</div>${readOnly ? '<div class="completed-note">✓ Žetony jsou uložené. Pro změnu použij dole „Upravit odpověď“.</div>' : ''}</div>`;
   }
 
   function bindTaskEvents(visibleTasks) {
@@ -1502,12 +1569,65 @@
     });
 
     taskListEl.querySelectorAll('[data-status]').forEach(button => {
-      button.addEventListener('click', () => {
-        const taskState = getTaskState(button.dataset.task);
+      button.addEventListener('click', async () => {
+        const taskId = button.dataset.task;
+        const taskState = getTaskState(taskId);
         const next = button.dataset.status;
-        taskState.status = taskState.status === next ? '' : next;
+
+        if (next === 'completed' && taskState.status === 'completed') {
+          const task = tasks.find(item => item.id === taskId);
+          const yes = await askConfirm({
+            icon: '↩️',
+            title: 'Označit misi jako nesplněnou?',
+            text: `Mise „${task.title}“ se znovu otevře a půjde běžně upravovat.`,
+            confirm: 'Ano, znovu otevřít'
+          });
+          if (!yes) return;
+          taskState.status = '';
+          taskState.editing = false;
+        } else {
+          taskState.status = taskState.status === next ? '' : next;
+          taskState.editing = false;
+          if (next === 'completed') showToast('Mise splněna. Krásně se zazelenala.');
+        }
+
         saveState();
-        render();
+        await render();
+      });
+    });
+
+    taskListEl.querySelectorAll('[data-edit-task]').forEach(button => {
+      button.addEventListener('click', async () => {
+        const taskId = button.dataset.editTask;
+        const task = tasks.find(item => item.id === taskId);
+        const yes = await askConfirm({
+          icon: '✏️',
+          title: 'Opravdu upravit odpověď?',
+          text: `Odpověď u mise „${task.title}“ se znovu otevře. Mise přitom zůstane označená jako splněná.`,
+          confirm: 'Ano, upravit'
+        });
+        if (!yes) return;
+
+        const taskState = getTaskState(taskId);
+        taskState.editing = true;
+        if (task.special === 'ratingPair') {
+          taskState.pair.revealed = false;
+          taskState.pair.lockA = false;
+          taskState.pair.lockB = false;
+        }
+        saveState();
+        await render();
+        document.querySelector(`[data-task-card="${taskId}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    });
+
+    taskListEl.querySelectorAll('[data-save-edit]').forEach(button => {
+      button.addEventListener('click', async () => {
+        const taskState = getTaskState(button.dataset.saveEdit);
+        taskState.editing = false;
+        saveState();
+        showToast('Úpravy uloženy. Mise zůstává splněná.');
+        await render();
       });
     });
 
