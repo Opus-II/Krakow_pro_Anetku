@@ -639,6 +639,94 @@
       font-weight: 760;
     }
 
+    .dragon-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .dragon-locked {
+      padding: 18px 15px;
+      text-align: center;
+      border: 1px solid rgba(200,149,67,.35);
+      border-radius: 17px;
+      background: #fffaf0;
+    }
+    .dragon-locked .lock-icon { font-size: 2rem; }
+    .dragon-locked strong { display: block; margin: 4px 0; }
+    .dragon-locked p { margin: 0; color: var(--muted); font-size: .86rem; }
+    .dragon-pick {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+    }
+    .dragon-result {
+      padding: 18px;
+      border: 1px solid rgba(112,31,59,.22);
+      border-radius: 17px;
+      text-align: center;
+      background:
+        radial-gradient(circle at 90% 0%, rgba(200,149,67,.18), transparent 9rem),
+        var(--blush);
+    }
+    .dragon-result span {
+      display: block;
+      color: var(--muted);
+      font-size: .8rem;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .dragon-result strong {
+      display: block;
+      margin-top: 4px;
+      color: var(--wine);
+      font-family: Georgia, serif;
+      font-size: 1.25rem;
+    }
+    .dragon-result p {
+      margin: 10px 0 6px;
+      font-size: 1.05rem;
+      font-weight: 800;
+    }
+    .dragon-result small { color: var(--muted); }
+
+    .beer-list { display: grid; gap: 10px; }
+    .beer-row {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) minmax(115px, .38fr) auto;
+      align-items: end;
+      gap: 9px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      background: #fff;
+    }
+    .beer-number {
+      display: grid;
+      place-items: center;
+      align-self: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--gold);
+      font-weight: 900;
+    }
+    .beer-field label { font-size: .78rem; }
+    .beer-rating .input { text-align: center; }
+    .beer-remove {
+      align-self: center;
+      width: 34px;
+      height: 34px;
+      border: 1px solid rgba(179,58,36,.28);
+      border-radius: 10px;
+      color: var(--spice);
+      background: #fff;
+      font-size: 1.2rem;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
     .pair-rating {
       display: grid;
       gap: 10px;
@@ -846,8 +934,11 @@
     .hidden { display: none !important; }
 
     @media (max-width: 570px) {
-      .fields-grid, .fields-grid.three, .pair-rating { grid-template-columns: 1fr; }
+      .fields-grid, .fields-grid.three, .pair-rating, .dragon-options, .dragon-pick { grid-template-columns: 1fr; }
       .photo-actions { grid-template-columns: 1fr; }
+      .beer-row { grid-template-columns: auto 1fr auto; }
+      .beer-row .beer-rating { grid-column: 2 / 3; }
+      .beer-remove { grid-column: 3; grid-row: 1 / span 2; }
       .hero { padding: 24px 20px 21px; }
       .task-summary { padding: 15px; }
       .task-content { padding: 0 15px 16px; }
@@ -883,7 +974,7 @@
           <li>Kolik úkolů splníš, je jen na Tobě. Ale čím více, tím lépe. 😂</li>
           <li>Po klepnutí na <strong>Splněno</strong> úkol zazelená a odpověď se zamkne.</li>
           <li>Potřebuješ něco opravit? Použij <strong>Upravit odpověď</strong> a potvrď, že ji opravdu chceš znovu otevřít.</li>
-          <li>U tajných odpovědí použij <strong>Zamknout na večer</strong>. Znovu se ukážou až po potvrzení odhalení.</li>
+          <li>U tajných odpovědí použij tlačítko pro zamknutí. Aplikace Ti vždy napoví, kdy je správný čas odpověď znovu odhalit.</li>
           <li><strong>Tajná část</strong> se zobrazí až po ručním odemknutí její záložky.</li>
         </ul>
       </div>
@@ -934,7 +1025,8 @@
     { id: 'day1', icon: '✈️', tab: 'Den 1', kicker: 'Přílet · centrum · galerie', title: 'První setkání s Krakovem', description: 'První polština, Rynek, Sukiennice, bazilika a galerie.' },
     { id: 'day2', icon: '🐉', tab: 'Den 2', kicker: 'Wawel · Kazimierz · Podgórze', title: 'Králové, drak, Anetka a Pavel', description: 'Největší balíček úkolů. Vyber si jen ty, které se zrovna hodí.' },
     { id: 'day3', icon: '🧂', tab: 'Den 3', kicker: 'Wieliczka', title: 'Sůl, schody a jedna pravda', description: 'Podzemní úkoly, přání a otázka, která počká na povrch.' },
-    { id: 'day4', icon: '🕯️', tab: 'Den 4', kicker: 'Osvětim', title: 'Režim ticha', description: 'Tady hra na chvíli ustupuje. Jediná reflexní karta patří až po odjezdu.' },
+    { id: 'day4', icon: '🕯️', tab: 'Den 4', kicker: 'Osvětim', title: 'Režim ticha', description: 'Tady hra ustupuje. Oba úkoly otevři až po odjezdu, v klidu a bez spěchu.' },
+    { id: 'day5', icon: '🧳', tab: 'Den 5', kicker: 'Ohlédnutí · cesta domů', title: 'Co si z Krakova odvážíš', description: 'Krátké ohlédnutí za tím nejlepším, nejchutnějším a tím, co by příště mohlo být jinak.' },
     { id: 'trip', icon: '🧭', tab: 'Celý výlet', kicker: 'Univerzální úkoly', title: 'Kdykoli cestou', description: 'Jídlo, fotografie, navigace a drobné momenty, které nejsou vázané na jedinou zastávku.' },
     { id: 'spicy', icon: '🌶️', tab: 'Tajná část', kicker: 'Romantické · spicy · soukromé', title: 'Tajná část výletu', description: 'Odemkni ji ručně, až na ni bude správná nálada.', spicy: true }
   ];
@@ -966,8 +1058,8 @@
     },
     {
       id: 'd1-05', section: 'day1', icon: '🏰', title: 'Dvě věže, jedna teorie', place: 'Bazilika Panny Marie',
-      instructions: `<p>Vymysli zcela falešné, ale přesvědčivé vysvětlení, proč mají věže baziliky odlišnou podobu.</p><p>Musíš použít slova: <strong>král</strong>, <strong>žárlivost</strong> a <strong>stavební povolení</strong>.</p>`,
-      fields: [{ type: 'textarea', key: 'theory', label: 'Tvoje odborná teorie', placeholder: 'Můžeš ji zapsat, nebo úkol přednést živě…', help: 'Pokud ji odvyprávíš živě, stačí úkol označit jako splněný.' }]
+      instructions: `<p>Postav se s Pavlem před baziliku a živě mu odvyprávěj zcela falešné, ale co nejpřesvědčivější vysvětlení, proč mají její věže odlišnou podobu.</p><p>V příběhu musí zaznít slova: <strong>král</strong>, <strong>žárlivost</strong> a <strong>stavební povolení</strong>.</p>`,
+      fields: [{ type: 'textarea', key: 'theory', label: 'Poznámka pro sebe (volitelné)', placeholder: 'Jestli si chceš svoji teorii uchovat, můžeš ji zapsat sem…', help: 'Hlavní částí úkolu je živé vyprávění Pavlovi.' }]
     },
     {
       id: 'd1-06', section: 'day1', icon: '🎺', title: 'Hejnałová předpověď', place: 'Okolí baziliky Panny Marie',
@@ -1012,13 +1104,8 @@
       fields: [{ type: 'textarea', key: 'order', label: 'Text královského nařízení', placeholder: 'Nařizuji tímto…' }]
     },
     {
-      id: 'd2-13', section: 'day2', icon: '🐉', title: 'Drak rozhodne', place: 'Okolí wawelského draka',
-      instructions: `<p>Vymysli dvě možnosti večerního programu. Jednu přiděl hlavě a druhou ocasu. Pavel si bez přemýšlení vybere jednu stranu draka. Vybraná možnost platí.</p>`,
-      fields: [
-        { type: 'text', key: 'head', label: 'Dračí hlava', placeholder: 'Možnost A' },
-        { type: 'text', key: 'tail', label: 'Dračí ocas', placeholder: 'Možnost B' },
-        { type: 'select', key: 'result', label: 'Drak rozhodl', options: ['', 'Hlava', 'Ocas'] }
-      ]
+      id: 'd2-13', section: 'day2', icon: '🐉', title: 'Drak rozhodne', place: 'Okolí wawelského draka', special: 'dragonChoice',
+      instructions: `<p>Vymysli dvě možnosti večerního programu. Jednu ukryj pod dračí hlavu a druhou pod ocas. Potom obě zamkni a nech Pavla bez přemýšlení vybrat jednu stranu.</p><p>Po výběru se ukáže jen zvolená možnost. Druhá zůstane tajná.</p>`
     },
     {
       id: 'd2-14', section: 'day2', icon: '🕵️', title: 'Hradní detektiv', place: 'Wawel · hradní okruh',
@@ -1081,6 +1168,15 @@
     },
     {
       id: 'd3-22', section: 'day3', icon: '❓', title: '800 schodů, jedna pravda', place: 'Wieliczka', secret: true,
+      lockButton: '🔒 Zamknout do návratu na povrch',
+      lockConfirm: 'Zamknout do návratu na povrch',
+      lockTitle: 'Zamknout otázku?',
+      lockToast: 'Otázka je zamčená a čeká na povrch.',
+      lockedTitle: 'Otázka čeká na povrch',
+      lockedText: 'Odhal ji až po návratu z dolu.',
+      unlockButton: 'Odhalit na povrchu',
+      unlockTitle: 'Jste už na povrchu?',
+      unlockConfirm: 'Ano, odhalit otázku',
       instructions: `<p>Vymysli jednu otázku, na kterou ses Pavla ještě nikdy nezeptala. Polož mu ji až po návratu na povrch.</p><p>Může být milá, hlubší i lehce spicy.</p>`,
       fields: [{ type: 'textarea', key: 'question', label: 'Otázka na povrch', placeholder: 'Na co ses Pavla ještě nikdy nezeptala?' }]
     },
@@ -1097,6 +1193,21 @@
       id: 'd4-24', section: 'day4', icon: '🕯️', title: 'Co se mnou zůstalo', place: 'Až po odjezdu z Osvětimi',
       instructions: `<p>Až po odjezdu napiš jednu informaci, osobní příběh, místo nebo detail, který v Tobě zůstal nejsilněji.</p><p>Není nutné psát dlouze. Můžeš si odpověď nechat jen pro sebe nebo ji sdílet s Pavlem.</p>`,
       fields: [{ type: 'textarea', key: 'reflection', label: 'Soukromý zápis', placeholder: 'Co v Tobě zůstalo…' }]
+    },
+    {
+      id: 'd4-after', section: 'day4', icon: '🌤️', title: 'Co by mi teď udělalo dobře', place: 'Až po odjezdu z Osvětimi',
+      instructions: `<p>Až budete pryč z areálu a budeš chtít, řekni Pavlovi, co by Ti pomohlo vrátit se do klidnější nebo lehčí nálady.</p><p>Může to být procházka, pivo, něco dobrého, společná hra, chvíle ticha nebo úplně něco jiného.</p>`,
+      fields: [{ type: 'textarea', key: 'comfort', label: 'Poznámka pro sebe (volitelné)', placeholder: 'Co by mi teď udělalo dobře…', help: 'Hlavní je říct to Pavlovi. Zápis je jen pro případ, že si ho budeš chtít nechat.' }]
+    },
+
+    {
+      id: 'd5-summary', section: 'day5', icon: '🧳', title: 'Krakovská bilance', place: 'Cesta domů nebo po návratu',
+      instructions: `<p>Na závěr se krátce ohlédni za celým výletem. Nemusíš psát román — stačí to, co Ti přijde jako první.</p>`,
+      fields: [
+        { type: 'textarea', key: 'liked', label: 'Co se mi líbilo nejvíc?', placeholder: 'Místo, okamžik, zážitek nebo cokoli dalšího…' },
+        { type: 'textarea', key: 'tasted', label: 'Co mi nejvíc chutnalo?', placeholder: 'Jídlo, pití nebo vítěz celého výletu…' },
+        { type: 'textarea', key: 'change', label: 'Co bych příště změnila?', placeholder: 'Tempo, program, výběr míst nebo vůbec nic…' }
+      ]
     },
 
     {
@@ -1137,6 +1248,10 @@
       id: 'trip-30', section: 'trip', icon: '🤳', title: 'Společná fotografie', place: 'Místo, které chceš uchovat',
       instructions: `<p>Během výletu sama navrhni a iniciuj alespoň jednu společnou fotografii s Pavlem na místě, které chceš uchovat. Nesmí jít o splnění jiného fotografického úkolu.</p>`,
       photos: [{ key: 'photo', label: 'Fotografie, kterou jsi sama iniciovala' }]
+    },
+    {
+      id: 'trip-beer', section: 'trip', icon: '🍺', title: 'Pivní ochutnávka', place: 'Kdykoli během výletu', special: 'beerTasting',
+      instructions: `<p>Ochutnej alespoň tři různé značky místního piva. U každého si zapiš název a hodnocení od 1 do 10.</p><p>Po třetím můžeš přidávat další, dokud bude co objevovat.</p>`
     },
 
     {
@@ -1266,13 +1381,28 @@
 
   function getTaskState(taskId) {
     if (!state.taskData[taskId]) {
-      state.taskData[taskId] = { values: {}, status: '', locked: false, editing: false, pair: {}, tokens: [] };
+      state.taskData[taskId] = { values: {}, status: '', locked: false, editing: false, pair: {}, tokens: [], dragon: {}, beers: [] };
     }
     const item = state.taskData[taskId];
     item.values ||= {};
     item.pair ||= {};
     item.tokens ||= [];
+    item.dragon ||= {};
+    item.beers ||= [];
     item.editing = Boolean(item.editing);
+
+    // Převod případných starších odpovědí u úkolu „Drak rozhodne“.
+    if (taskId === 'd2-13') {
+      item.dragon.head ??= item.values.head || '';
+      item.dragon.tail ??= item.values.tail || '';
+      item.dragon.choice ||= item.values.result === 'Hlava'
+        ? 'head'
+        : item.values.result === 'Ocas'
+          ? 'tail'
+          : '';
+      item.dragon.locked = Boolean(item.dragon.locked || item.dragon.choice);
+    }
+
     return item;
   }
 
@@ -1325,7 +1455,7 @@
     `;
 
     if (section.id === 'day4') {
-      specialEl.innerHTML = `<div class="silence-card"><strong>V areálu se žádné úkoly neplní.</strong>Reflexní kartu otevři až po odjezdu, v klidu a bez spěchu.</div>`;
+      specialEl.innerHTML = `<div class="silence-card"><strong>V areálu se žádné úkoly neplní.</strong>Obě karty otevři až po odjezdu, v klidu a bez spěchu.</div>`;
     } else if (section.id === 'spicy' && !state.spicyUnlocked) {
       specialEl.innerHTML = `
         <div class="spicy-gate">
@@ -1405,7 +1535,11 @@
       ? renderRatingPair(task, taskState, readOnly)
       : task.special === 'tokens'
         ? renderTokens(task, taskState, readOnly)
-        : renderRegularAnswers(task, taskState, readOnly);
+        : task.special === 'dragonChoice'
+          ? renderDragonChoice(task, taskState, readOnly)
+          : task.special === 'beerTasting'
+            ? renderBeerTasting(task, taskState, readOnly)
+            : renderRegularAnswers(task, taskState, readOnly);
 
     const footerHtml = isCompleted
       ? isEditing
@@ -1442,11 +1576,15 @@
     const controlsDisabled = secretLocked || readOnly;
     const photos = (task.photos || []).map(photo => renderPhotoField(task, photo, controlsDisabled)).join('');
     const fields = (task.fields || []).map(field => renderField(task, field, taskState.values[field.key], controlsDisabled)).join('');
+    const lockButton = task.lockButton || '🔒 Zamknout na večer';
+    const lockedTitle = task.lockedTitle || 'Odpověď je zamčená';
+    const lockedText = task.lockedText || 'Obsah se zobrazí až po ručním potvrzení.';
+    const unlockButton = task.unlockButton || 'Odhalit odpověď';
     const lockActions = task.secret && !readOnly ? `
       <div class="answer-actions">
         ${secretLocked
           ? ''
-          : `<button type="button" class="small-button secret-action" data-lock-task="${task.id}">🔒 Zamknout na večer</button>`}
+          : `<button type="button" class="small-button secret-action" data-lock-task="${task.id}">${escapeHtml(lockButton)}</button>`}
       </div>
     ` : '';
 
@@ -1458,9 +1596,9 @@
       ${task.secret ? `
         <div class="locked-answer ${secretLocked ? 'show' : ''}" data-locked-area="${task.id}">
           <div class="lock-icon">🔐</div>
-          <strong>Odpověď je zamčená</strong>
-          <p>Obsah se zobrazí až po ručním potvrzení.</p>
-          <button type="button" class="small-button secret-action" data-unlock-task="${task.id}">Odhalit odpověď</button>
+          <strong>${escapeHtml(lockedTitle)}</strong>
+          <p>${escapeHtml(lockedText)}</p>
+          <button type="button" class="small-button secret-action" data-unlock-task="${task.id}">${escapeHtml(unlockButton)}</button>
         </div>
       ` : ''}
     `;
@@ -1502,6 +1640,95 @@
     `;
   }
 
+  function renderDragonChoice(task, taskState, readOnly = false) {
+    const dragon = taskState.dragon || {};
+    const head = dragon.head || '';
+    const tail = dragon.tail || '';
+    const locked = Boolean(dragon.locked);
+    const choice = dragon.choice || '';
+
+    if (!locked) {
+      return `
+        <div class="answer-area">
+          <div class="dragon-options">
+            <div class="field">
+              <label>Dračí hlava</label>
+              <input class="input" type="text" value="${escapeHtml(head)}" placeholder="Možnost ukrytá pod hlavou" data-dragon-field="head" data-task="${task.id}" ${readOnly ? 'disabled' : ''}>
+            </div>
+            <div class="field">
+              <label>Dračí ocas</label>
+              <input class="input" type="text" value="${escapeHtml(tail)}" placeholder="Možnost ukrytá pod ocasem" data-dragon-field="tail" data-task="${task.id}" ${readOnly ? 'disabled' : ''}>
+            </div>
+          </div>
+          <button type="button" class="small-button secret-action" data-dragon-lock data-task="${task.id}" ${readOnly ? 'disabled' : ''}>🔒 Zamknout obě možnosti</button>
+          ${readOnly ? '<div class="completed-note">✓ Volby jsou uložené. Pro změnu použij dole „Upravit odpověď“.</div>' : ''}
+        </div>
+      `;
+    }
+
+    if (!choice) {
+      return `
+        <div class="answer-area">
+          <div class="dragon-locked">
+            <div class="lock-icon">🐉</div>
+            <strong>Obě možnosti jsou zamčené</strong>
+            <p>Pavel teď vybere hlavu nebo ocas, aniž by viděl, co se pod nimi skrývá.</p>
+          </div>
+          <div class="dragon-pick">
+            <button type="button" class="primary-button" data-dragon-pick="head" data-task="${task.id}" ${readOnly ? 'disabled' : ''}>Pavel vybral hlavu</button>
+            <button type="button" class="primary-button" data-dragon-pick="tail" data-task="${task.id}" ${readOnly ? 'disabled' : ''}>Pavel vybral ocas</button>
+          </div>
+          ${!readOnly ? `<button type="button" class="small-button" data-dragon-reset data-task="${task.id}">Zadat možnosti znovu</button>` : ''}
+          ${readOnly ? '<div class="completed-note">✓ Volby jsou uložené. Pro změnu použij dole „Upravit odpověď“.</div>' : ''}
+        </div>
+      `;
+    }
+
+    const pickedLabel = choice === 'head' ? 'Dračí hlava' : 'Dračí ocas';
+    const pickedValue = choice === 'head' ? head : tail;
+
+    return `
+      <div class="answer-area">
+        <div class="dragon-result">
+          <span>🐉 Drak rozhodl</span>
+          <strong>${escapeHtml(pickedLabel)}</strong>
+          <p>${escapeHtml(pickedValue)}</p>
+          <small>Druhá možnost zůstává skrytá.</small>
+        </div>
+        ${!readOnly ? `<button type="button" class="small-button" data-dragon-reset data-task="${task.id}">Zadat možnosti znovu</button>` : ''}
+        ${readOnly ? '<div class="completed-note">✓ Výsledek je uložený. Pro změnu použij dole „Upravit odpověď“.</div>' : ''}
+      </div>
+    `;
+  }
+
+  function renderBeerTasting(task, taskState, readOnly = false) {
+    const beers = taskState.beers || (taskState.beers = []);
+    while (beers.length < 3) beers.push({ brand: '', rating: '' });
+
+    return `
+      <div class="answer-area">
+        <div class="beer-list">
+          ${beers.map((beer, index) => `
+            <div class="beer-row">
+              <span class="beer-number">${index + 1}</span>
+              <div class="field beer-field">
+                <label>Značka piva</label>
+                <input class="input" type="text" value="${escapeHtml(beer.brand || '')}" placeholder="Název značky" data-beer-field="brand" data-index="${index}" data-task="${task.id}" ${readOnly ? 'disabled' : ''}>
+              </div>
+              <div class="field beer-field beer-rating">
+                <label>Hodnocení / 10</label>
+                <input class="input" type="number" min="1" max="10" value="${escapeHtml(beer.rating || '')}" placeholder="1–10" data-beer-field="rating" data-index="${index}" data-task="${task.id}" ${readOnly ? 'disabled' : ''}>
+              </div>
+              ${index >= 3 && !readOnly ? `<button type="button" class="beer-remove" data-remove-beer data-index="${index}" data-task="${task.id}" aria-label="Odebrat pivo">×</button>` : ''}
+            </div>
+          `).join('')}
+        </div>
+        ${!readOnly ? `<button type="button" class="small-button" data-add-beer data-task="${task.id}">＋ Přidat další pivo</button>` : ''}
+        ${readOnly ? '<div class="completed-note">✓ Pivní hodnocení je uložené. Pro změnu použij dole „Upravit odpověď“.</div>' : ''}
+      </div>
+    `;
+  }
+
   function renderRatingPair(task, taskState, readOnly = false) {
     const pair = taskState.pair || {};
     const revealed = Boolean(pair.revealed);
@@ -1532,6 +1759,116 @@
         updateWordCounter(event.target);
       });
       updateWordCounter(input);
+    });
+
+
+    taskListEl.querySelectorAll('[data-dragon-field]').forEach(input => {
+      input.addEventListener('input', () => {
+        const dragon = getTaskState(input.dataset.task).dragon;
+        dragon[input.dataset.dragonField] = input.value;
+        saveState();
+      });
+    });
+
+    taskListEl.querySelectorAll('[data-dragon-lock]').forEach(button => {
+      button.addEventListener('click', async () => {
+        const taskId = button.dataset.task;
+        const dragon = getTaskState(taskId).dragon;
+        const head = (dragon.head || '').trim();
+        const tail = (dragon.tail || '').trim();
+
+        if (!head || !tail) {
+          showToast('Nejdřív vyplň možnost pro hlavu i ocas.');
+          return;
+        }
+
+        if (head.toLocaleLowerCase('cs') === tail.toLocaleLowerCase('cs')) {
+          showToast('Hlava a ocas by měly skrývat dvě různé možnosti.');
+          return;
+        }
+
+        const yes = await askConfirm({
+          icon: '🐉',
+          title: 'Zamknout obě možnosti?',
+          text: 'Po zamknutí už Pavel uvidí jen volbu mezi hlavou a ocasem.',
+          confirm: 'Ano, zamknout'
+        });
+        if (!yes) return;
+
+        dragon.head = head;
+        dragon.tail = tail;
+        dragon.locked = true;
+        dragon.choice = '';
+        saveState();
+        showToast('Obě možnosti jsou zamčené.');
+        render();
+      });
+    });
+
+    taskListEl.querySelectorAll('[data-dragon-pick]').forEach(button => {
+      button.addEventListener('click', async () => {
+        const taskId = button.dataset.task;
+        const choice = button.dataset.dragonPick;
+        const label = choice === 'head' ? 'hlavu' : 'ocas';
+        const yes = await askConfirm({
+          icon: '🐉',
+          title: `Pavel vybral ${label}?`,
+          text: 'Zobrazí se pouze vybraná možnost. Druhá zůstane skrytá.',
+          confirm: `Odhalit ${label}`
+        });
+        if (!yes) return;
+
+        getTaskState(taskId).dragon.choice = choice;
+        saveState();
+        render();
+      });
+    });
+
+    taskListEl.querySelectorAll('[data-dragon-reset]').forEach(button => {
+      button.addEventListener('click', async () => {
+        const yes = await askConfirm({
+          icon: '↩️',
+          title: 'Zadat nové možnosti?',
+          text: 'Současná volba se zruší a obě možnosti bude možné přepsat.',
+          confirm: 'Ano, zadat znovu'
+        });
+        if (!yes) return;
+
+        const dragon = getTaskState(button.dataset.task).dragon;
+        dragon.locked = false;
+        dragon.choice = '';
+        saveState();
+        render();
+      });
+    });
+
+    taskListEl.querySelectorAll('[data-beer-field]').forEach(input => {
+      input.addEventListener('input', () => {
+        const taskState = getTaskState(input.dataset.task);
+        const index = Number(input.dataset.index);
+        taskState.beers[index] ||= { brand: '', rating: '' };
+        taskState.beers[index][input.dataset.beerField] = input.value;
+        saveState();
+      });
+    });
+
+    taskListEl.querySelectorAll('[data-add-beer]').forEach(button => {
+      button.addEventListener('click', () => {
+        getTaskState(button.dataset.task).beers.push({ brand: '', rating: '' });
+        saveState();
+        render();
+      });
+    });
+
+    taskListEl.querySelectorAll('[data-remove-beer]').forEach(button => {
+      button.addEventListener('click', () => {
+        const taskState = getTaskState(button.dataset.task);
+        const index = Number(button.dataset.index);
+        if (index < 3) return;
+        taskState.beers.splice(index, 1);
+        saveState();
+        render();
+      });
     });
 
     taskListEl.querySelectorAll('[data-photo-input]').forEach(input => {
@@ -1634,11 +1971,16 @@
       button.addEventListener('click', async () => {
         const taskId = button.dataset.lockTask;
         const task = tasks.find(item => item.id === taskId);
-        const yes = await askConfirm({ icon: '🔐', title: 'Zamknout odpověď?', text: `Obsah úkolu „${task.title}“ se skryje. Odhalit ho půjde až po dalším potvrzení.`, confirm: 'Zamknout na večer' });
+        const yes = await askConfirm({
+          icon: '🔐',
+          title: task.lockTitle || 'Zamknout odpověď?',
+          text: `Obsah úkolu „${task.title}“ se skryje. Odhalit ho půjde až po dalším potvrzení.`,
+          confirm: task.lockConfirm || 'Zamknout na večer'
+        });
         if (yes) {
           getTaskState(taskId).locked = true;
           saveState();
-          showToast('Odpověď je zamčená.');
+          showToast(task.lockToast || 'Odpověď je zamčená.');
           render();
         }
       });
@@ -1648,7 +1990,12 @@
       button.addEventListener('click', async () => {
         const taskId = button.dataset.unlockTask;
         const task = tasks.find(item => item.id === taskId);
-        const yes = await askConfirm({ icon: '💌', title: 'Opravdu odhalit odpověď?', text: `Obsah úkolu „${task.title}“ se znovu zobrazí.`, confirm: 'Ano, odhalit' });
+        const yes = await askConfirm({
+          icon: '💌',
+          title: task.unlockTitle || 'Opravdu odhalit odpověď?',
+          text: `Obsah úkolu „${task.title}“ se znovu zobrazí.`,
+          confirm: task.unlockConfirm || 'Ano, odhalit'
+        });
         if (yes) {
           getTaskState(taskId).locked = false;
           saveState();
