@@ -864,10 +864,10 @@
 <body>
   <main class="app-shell">
     <section class="hero">
-      <div class="eyebrow">🧭 výletní hra jen pro Tebe</div>
+      <div class="eyebrow">🧭 výroční hra jen pro Anetku</div>
       <h1>Cesta čtvrtého draka 🐉</h1>
       <p class="hero-subtitle">Tři už máš. Čtvrtý na Tebe čeká v Krakově.</p>
-      <div class="hero-note"><span>💌</span><span>Nemusíš splnit všechno. Vybírej si úkoly podle nálady, hlavní je užít si náš výlet na maximum.</span></div>
+      <div class="hero-note"><span>💌</span><span>Anetko, nemusíš splnit všechno. Vybírej si úkoly podle nálady — hlavní je, abychom si náš výlet užili spolu na maximum.</span></div>
       <div class="overall-progress">
         <div class="progress-head"><span>Celý výlet</span><span id="overallProgressText">0 splněno</span></div>
         <div class="progress-track"><div class="progress-bar" id="overallProgressBar"></div></div>
@@ -932,7 +932,7 @@
 
   const sections = [
     { id: 'day1', icon: '✈️', tab: 'Den 1', kicker: 'Přílet · centrum · galerie', title: 'První setkání s Krakovem', description: 'První polština, Rynek, Sukiennice, bazilika a galerie.' },
-    { id: 'day2', icon: '🐉', tab: 'Den 2', kicker: 'Wawel · Kazimierz · Podgórze', title: 'Králové, drak a dva turisté', description: 'Největší balíček úkolů. Vyber si jen ty, které se zrovna hodí.' },
+    { id: 'day2', icon: '🐉', tab: 'Den 2', kicker: 'Wawel · Kazimierz · Podgórze', title: 'Králové, drak, Anetka a Pavel', description: 'Největší balíček úkolů. Vyber si jen ty, které se zrovna hodí.' },
     { id: 'day3', icon: '🧂', tab: 'Den 3', kicker: 'Wieliczka', title: 'Sůl, schody a jedna pravda', description: 'Podzemní úkoly, přání a otázka, která počká na povrch.' },
     { id: 'day4', icon: '🕯️', tab: 'Den 4', kicker: 'Osvětim', title: 'Režim ticha', description: 'Tady hra na chvíli ustupuje. Jediná reflexní karta patří až po odjezdu.' },
     { id: 'trip', icon: '🧭', tab: 'Celý výlet', kicker: 'Univerzální úkoly', title: 'Kdykoli cestou', description: 'Jídlo, fotografie, navigace a drobné momenty, které nejsou vázané na jedinou zastávku.' },
@@ -946,23 +946,23 @@
       fields: [{ type: 'text', key: 'seat', label: 'Číslo sedadla', placeholder: 'Např. 14A' }]
     },
     {
-      id: 'd1-02', section: 'day1', icon: '🇵🇱', title: 'První polský důkaz', place: 'Střet civilizací',
-      instructions: `<p>Napiš první slovo, které uvidíš v polštině, a odhadni, co znamená. Překladač zatím odpočívá.</p>`,
+      id: 'd1-02', section: 'day1', icon: '🇵🇱', title: 'První polský důkaz', place: 'První setkání s polštinou',
+      instructions: `<p>Napiš první slovo, které uvidíš v polštině, a odhadni, co znamená. Zatím bez překladače.</p>`,
       fields: [
-        { type: 'text', key: 'word', label: 'Polské slovo', placeholder: 'První slovo, které Tě praští do očí' },
+        { type: 'text', key: 'word', label: 'Polské slovo', placeholder: 'První slovo, kterého si všimneš' },
         { type: 'textarea', key: 'meaning', label: 'Co podle Tebe znamená?', placeholder: 'Tvůj odhad…' }
       ]
     },
     {
       id: 'd1-03', section: 'day1', icon: '📸', title: 'Náměstí jedním záběrem', place: 'Rynek Główny / bazilika Panny Marie',
-      instructions: `<p>Pořiď fotografii, na které budou současně alespoň tři z následujících věcí:</p><ul><li>bazilika Panny Marie,</li><li>Sukiennice,</li><li>kočár nebo kočárek,</li><li>holub,</li><li>věž radnice,</li><li>já.</li></ul><p>Poslední položka je samozřejmě nejvzácnější krakovský exponát.</p>`,
+      instructions: `<p>Pořiď fotografii, na které budou současně alespoň tři z následujících věcí:</p><ul><li>bazilika Panny Marie,</li><li>Sukiennice,</li><li>kočár nebo kočárek,</li><li>holub,</li><li>věž radnice,</li><li>Pavel.</li></ul><p>Pavel se do výběru počítá taky.</p>`,
       photos: [{ key: 'photo', label: 'Fotografie náměstí' }]
     },
     {
       id: 'd1-04', section: 'day1', icon: '🛍️', title: 'Obchod století', place: 'Sukiennice',
-      instructions: `<p>Najdi suvenýr, který Ti nejvíce připomíná mě. Nemusíš ho kupovat — stačí jej vyfotit a vysvětlit svůj výběr.</p>`,
+      instructions: `<p>Najdi suvenýr, který Ti nejvíce připomíná Pavla. Nemusíš ho kupovat — stačí jej vyfotit a vysvětlit svůj výběr.</p>`,
       photos: [{ key: 'photo', label: 'Suvenýr století' }],
-      fields: [{ type: 'textarea', key: 'why', label: 'Proč právě tenhle?', placeholder: 'Vysvětlení, které mě možná potěší a možná znepokojí…' }]
+      fields: [{ type: 'textarea', key: 'why', label: 'Proč právě tenhle?', placeholder: 'Co Ti na něm Pavla připomnělo?' }]
     },
     {
       id: 'd1-05', section: 'day1', icon: '🏰', title: 'Dvě věže, jedna teorie', place: 'Bazilika Panny Marie',
@@ -974,25 +974,25 @@
       instructions: `<p>Ještě před zazněním trubačského signálu odhadni, jak dlouho bude trvat. Po skončení sama zhodnoť kvalitu své předpovědi.</p>`,
       fields: [
         { type: 'number', key: 'seconds', label: 'Můj odhad v sekundách', placeholder: '0', min: 1, max: 600 },
-        { type: 'select', key: 'verdict', label: 'Sebehodnocení', options: ['', 'Geniální', 'Přijatelné', 'Totální turistický freestyle'] }
+        { type: 'select', key: 'verdict', label: 'Sebehodnocení', options: ['', 'Trefa', 'Docela blízko', 'Úplně mimo'] }
       ]
     },
     {
-      id: 'd1-07', section: 'day1', icon: '🖼️', title: 'Obraz pro mě', place: 'Galerie', secret: true,
-      instructions: `<p>Vyber jeden obraz, který si myslíš, že by se mi mohl fakt líbit. Ideálně tajně.</p>`,
+      id: 'd1-07', section: 'day1', icon: '🖼️', title: 'Obraz pro Pavla', place: 'Galerie', secret: true,
+      instructions: `<p>Vyber jeden obraz, který by se podle Tebe mohl Pavlovi fakt líbit. Ideálně tajně.</p>`,
       photos: [{ key: 'photo', label: 'Vybraný obraz' }],
-      fields: [{ type: 'textarea', key: 'why', label: 'Proč by se mi mohl líbit?', placeholder: 'Jedna věta úplně stačí…' }]
+      fields: [{ type: 'textarea', key: 'why', label: 'Proč by se Pavlovi mohl líbit?', placeholder: 'Jedna věta úplně stačí…' }]
     },
     {
       id: 'd1-08', section: 'day1', icon: '❤️', title: 'Obraz pro nás', place: 'Galerie',
       instructions: `<p>Vyber jeden obraz, který podle Tebe nejlépe znázorňuje nás dva nebo náš vztah.</p>`,
       photos: [{ key: 'photo', label: 'Náš obraz' }],
-      fields: [{ type: 'textarea', key: 'why', label: 'Proč právě tenhle?', placeholder: 'Romantická, vtipná i podezřele upřímná odpověď je správně.' }]
+      fields: [{ type: 'textarea', key: 'why', label: 'Proč právě tenhle?', placeholder: 'Romantická, vtipná nebo úplně upřímná odpověď je správně.' }]
     },
 
     {
       id: 'd2-09', section: 'day2', icon: '👑', title: 'Královský portrét', place: 'Wawel',
-      instructions: `<p>Najděte místo, které by mohlo posloužit jako kulisa královského portrétu. Na společné fotografii:</p><ul><li>jeden vypadá jako panovník,</li><li>druhý jako člověk, který už jeho panování nezvládá.</li></ul>`,
+      instructions: `<p>Najdi místo, které by mohlo posloužit jako kulisa královského portrétu Tebe a Pavla. Na společné fotografii:</p><ul><li>jeden vypadá jako panovník,</li><li>druhý jako člověk, který už jeho panování nezvládá.</li></ul>`,
       photos: [{ key: 'photo', label: 'Povinná společná fotka' }]
     },
     {
@@ -1002,18 +1002,18 @@
     },
     {
       id: 'd2-11', section: 'day2', icon: '🔍', title: 'Tajný detail Krakova', place: 'Historické centrum',
-      instructions: `<p>Vyfoť jeden drobný detail, kterého jsem si podle Tebe nevšiml.</p>`,
+      instructions: `<p>Vyfoť jeden drobný detail, kterého si Pavel podle Tebe nevšiml.</p>`,
       photos: [{ key: 'photo', label: 'Tajný detail' }],
       fields: [{ type: 'text', key: 'place', label: 'Kde vznikla fotografie?', placeholder: 'Ulice, památka nebo stručný popis místa' }]
     },
     {
       id: 'd2-12', section: 'day2', icon: '📜', title: 'Královské nařízení', place: 'Wawel',
-      instructions: `<p>Jako vládkyně Krakova vydej jedno nařízení, které budu muset dodržovat do konce dne.</p><ul><li>Musí být neškodné.</li><li>Musí být reálně splnitelné.</li><li>Musí být alespoň trochu směšné.</li></ul><blockquote>Pokaždé, když uvidím korunu, musím Tě oslovit „Vaše Výsosti“.</blockquote>`,
+      instructions: `<p>Jako vládkyně Krakova vydej jedno nařízení, které musí Pavel dodržovat do konce dne.</p><ul><li>Musí být neškodné.</li><li>Musí být reálně splnitelné.</li><li>Musí být alespoň trochu směšné.</li></ul><blockquote>Pokaždé, když Pavel uvidí korunu, musí Tě oslovit „Vaše Výsosti“.</blockquote>`,
       fields: [{ type: 'textarea', key: 'order', label: 'Text královského nařízení', placeholder: 'Nařizuji tímto…' }]
     },
     {
       id: 'd2-13', section: 'day2', icon: '🐉', title: 'Drak rozhodne', place: 'Okolí wawelského draka',
-      instructions: `<p>Vymysli dvě možnosti večerního programu. Jednu přiděl hlavě a druhou ocasu. Já si bez přemýšlení vyberu jednu stranu draka. Vybraná možnost platí.</p>`,
+      instructions: `<p>Vymysli dvě možnosti večerního programu. Jednu přiděl hlavě a druhou ocasu. Pavel si bez přemýšlení vybere jednu stranu draka. Vybraná možnost platí.</p>`,
       fields: [
         { type: 'text', key: 'head', label: 'Dračí hlava', placeholder: 'Možnost A' },
         { type: 'text', key: 'tail', label: 'Dračí ocas', placeholder: 'Možnost B' },
@@ -1037,10 +1037,10 @@
     },
     {
       id: 'd2-16', section: 'day2', icon: '🤝', title: 'Dračí přísaha', place: 'Výstup z Dračí sluje',
-      instructions: `<p>Položíme současně ruku na nejbližší kámen a každý řekneme jednu věc, kterou bychom spolu chtěli během následujícího roku podniknout.</p><p>Odpověď nesmí být „jet zase někam na výlet“. To by bylo až moc easy mode.</p>`,
+      instructions: `<p>Ty i Pavel současně položíte ruku na nejbližší kámen a každý řeknete jednu věc, kterou byste spolu chtěli během následujícího roku podniknout.</p><p>Odpověď nesmí být „jet zase někam na výlet“. Zkus vymyslet něco konkrétnějšího.</p>`,
       fields: [
-        { type: 'textarea', key: 'hers', label: 'Moje přání', placeholder: 'Co bych chtěla podniknout…' },
-        { type: 'textarea', key: 'his', label: 'Tvoje přání', placeholder: 'Co chceš podniknout Ty…' }
+        { type: 'textarea', key: 'hers', label: 'Moje přání', placeholder: 'Co bych chtěla podniknout s Pavlem…' },
+        { type: 'textarea', key: 'his', label: 'Pavlovo přání', placeholder: 'Co by chtěl podniknout Pavel…' }
       ]
     },
     {
@@ -1053,9 +1053,9 @@
       instructions: `<p>Najdi místo, které by mohlo být na plakátu romantické komedie o našem výletu.</p><p>Vymysli název filmu, krátký slogan a rozhodni, kdo z nás by dostal hlavní roli.</p><blockquote>Přiletěli za památkami. Zůstali kvůli pierogům.</blockquote>`,
       photos: [{ key: 'photo', label: 'Místo pro filmový plakát' }],
       fields: [
-        { type: 'text', key: 'movie', label: 'Název filmu', placeholder: 'Krakovský blockbuster…' },
+        { type: 'text', key: 'movie', label: 'Název filmu', placeholder: 'Název vašeho filmu…' },
         { type: 'text', key: 'slogan', label: 'Slogan', placeholder: 'Jedna úderná věta…' },
-        { type: 'select', key: 'lead', label: 'Hlavní role', options: ['', 'Já', 'Ty', 'Oba stejně', 'Holub z Rynku'] }
+        { type: 'select', key: 'lead', label: 'Hlavní role', options: ['', 'Anetka', 'Pavel', 'Oba stejně', 'Holub z Rynku'] }
       ]
     },
     {
@@ -1076,17 +1076,17 @@
       fields: [
         { type: 'textarea', key: 'beautiful', label: 'Nejkrásnější prostor', placeholder: 'Místo nebo popis…' },
         { type: 'textarea', key: 'strange', label: 'Nejpodivnější věc', placeholder: 'Co Tě překvapilo…' },
-        { type: 'textarea', key: 'nohome', label: 'Doma bych rozhodně nechtěla', placeholder: 'Jedna podzemní hrůza…' }
+        { type: 'textarea', key: 'nohome', label: 'Doma bych rozhodně nechtěla', placeholder: 'Jedna věc…' }
       ]
     },
     {
       id: 'd3-22', section: 'day3', icon: '❓', title: '800 schodů, jedna pravda', place: 'Wieliczka', secret: true,
-      instructions: `<p>Vymysli jednu otázku, na kterou ses mě ještě nikdy nezeptala. Polož mi ji až po návratu na povrch.</p><p>Může být milá, hlubší i lehce spicy.</p>`,
-      fields: [{ type: 'textarea', key: 'question', label: 'Otázka na povrch', placeholder: 'Na co ses mě ještě nikdy nezeptala?' }]
+      instructions: `<p>Vymysli jednu otázku, na kterou ses Pavla ještě nikdy nezeptala. Polož mu ji až po návratu na povrch.</p><p>Může být milá, hlubší i lehce spicy.</p>`,
+      fields: [{ type: 'textarea', key: 'question', label: 'Otázka na povrch', placeholder: 'Na co ses Pavla ještě nikdy nezeptala?' }]
     },
     {
       id: 'd3-23', section: 'day3', icon: '✨', title: 'Kaple pro jedno přání', place: 'Nejpůsobivější prostor dolu', secret: true,
-      instructions: `<p>Něco si přej — musí se to týkat nás dvou. Potom rozhodni, co s přáním uděláš.</p>`,
+      instructions: `<p>Něco si přej — musí se to týkat Tebe a Pavla. Potom rozhodni, co s přáním uděláš.</p>`,
       fields: [
         { type: 'select', key: 'choice', label: 'Své přání…', options: ['', 'Řeknu hned', 'Řeknu večer', 'Nechám si jako tajemství'] },
         { type: 'textarea', key: 'wish', label: 'Přání si můžeš tajně zapsat', placeholder: 'Volitelné. Potom ho můžeš zamknout na večer.' }
@@ -1101,94 +1101,94 @@
 
     {
       id: 'trip-25', section: 'trip', icon: '🍽️', title: 'Polský ochutnávkový trojboj', place: 'Během celého výletu',
-      instructions: `<p>Společně ochutnejte tři různé polské věci:</p><ul><li>něco slaného,</li><li>něco sladkého,</li><li>něco, co ani jeden z vás předtím neměl.</li></ul>`,
+      instructions: `<p>Společně s Pavlem ochutnej tři různé polské věci:</p><ul><li>něco slaného,</li><li>něco sladkého,</li><li>něco, co jste ani jeden předtím neměli.</li></ul>`,
       fields: [
         { type: 'text', key: 'salty', label: 'Něco slaného', placeholder: 'Název jídla' },
         { type: 'text', key: 'sweet', label: 'Něco sladkého', placeholder: 'Název jídla' },
         { type: 'text', key: 'new', label: 'Něco nového', placeholder: 'Název jídla' },
-        { type: 'text', key: 'winner', label: 'Vítěz trojboje', placeholder: 'A absolutním vítězem se stává…' }
+        { type: 'text', key: 'winner', label: 'Vítěz trojboje', placeholder: 'Co vám chutnalo nejvíc?' }
       ]
     },
     {
       id: 'trip-26', section: 'trip', icon: '🥖', title: 'Zapiekankový verdikt', place: 'Kazimierz nebo kdykoli přijde hlad', special: 'ratingPair',
-      instructions: `<p>Vyberte jednu zapiekanku společně. Každý dá tajně hodnocení od 1 do 10. Odpovědi odhalte současně.</p><p>Fotografii pořiďte dřív, než ji někdo začne jíst. To bývá nejtěžší část úkolu.</p>`,
-      photos: [{ key: 'photo', label: 'Zapiekanka před útokem' }]
+      instructions: `<p>S Pavlem vyberte jednu zapiekanku. Každý dá tajně hodnocení od 1 do 10 a potom je odhalíte současně.</p><p>Fotografii pořiď dřív, než ji začnete jíst.</p>`,
+      photos: [{ key: 'photo', label: 'Zapiekanka před ochutnávkou' }]
     },
     {
       id: 'trip-27', section: 'trip', icon: '🥟', title: 'Pierogová diplomacie', place: 'Během společného jídla',
-      instructions: `<p>Každý vybere jednu příchuť pierogů pro toho druhého. Nesmíte si vybrat sami. Každý musí ochutnat alespoň jeden kus z výběru partnera.</p>`,
+      instructions: `<p>Pavel vybere jednu příchuť pierogů pro Tebe a Ty jednu pro Pavla. Nikdo si nesmí vybrat sám a oba musíte ochutnat alespoň jeden kus z výběru toho druhého.</p>`,
       fields: [
-        { type: 'text', key: 'forher', label: 'Co vybral on pro mě', placeholder: 'Příchuť pierogů' },
-        { type: 'text', key: 'forhim', label: 'Co jsem vybrala já pro něj', placeholder: 'Příchuť pierogů' },
+        { type: 'text', key: 'forher', label: 'Co vybral Pavel pro mě', placeholder: 'Příchuť pierogů' },
+        { type: 'text', key: 'forhim', label: 'Co jsem vybrala já', placeholder: 'Příchuť pierogů pro Pavla' },
         { type: 'text', key: 'verdict', label: 'Diplomatický verdikt', placeholder: 'Kdo vybral lépe?' }
       ]
     },
     {
       id: 'trip-28', section: 'trip', icon: '📷', title: 'Cizí fotografie', place: 'Kdekoli cestou',
-      instructions: `<p>Požádejte někoho, aby vás společně vyfotil.</p>`,
+      instructions: `<p>Požádej někoho, aby společně vyfotil Tebe a Pavla.</p>`,
       photos: [{ key: 'photo', label: 'Fotografie od cizího fotografa' }]
     },
     {
       id: 'trip-29', section: 'trip', icon: '🧭', title: 'Navigátor', place: 'Jedna hodina bez online mapy',
-      instructions: `<p>Na následující hodinu přebíráš navigaci. Při navigaci je zakázáno koukat do online mapy.</p>`,
-      fields: [{ type: 'textarea', key: 'result', label: 'Kam jsme nakonec došli?', placeholder: 'Úspěch, zkratka, nebo nový okres?' }]
+      instructions: `<p>Na následující hodinu přebíráš navigaci a Pavel se nechá vést. Při navigaci je zakázáno koukat do online mapy.</p>`,
+      fields: [{ type: 'textarea', key: 'result', label: 'Kam jsme nakonec došli?', placeholder: 'Kam nás navigace nakonec zavedla?' }]
     },
     {
       id: 'trip-30', section: 'trip', icon: '🤳', title: 'Společná fotografie', place: 'Místo, které chceš uchovat',
-      instructions: `<p>Během výletu sama navrhni a iniciuj alespoň jednu společnou fotografii na místě, které chceš uchovat. Nesmí jít o splnění jiného fotografického úkolu.</p>`,
+      instructions: `<p>Během výletu sama navrhni a iniciuj alespoň jednu společnou fotografii s Pavlem na místě, které chceš uchovat. Nesmí jít o splnění jiného fotografického úkolu.</p>`,
       photos: [{ key: 'photo', label: 'Fotografie, kterou jsi sama iniciovala' }]
     },
 
     {
       id: 'sp-01', section: 'spicy', icon: '🕵️', title: 'Tajný portrét', place: 'Během výletu', secret: true, spicy: 0,
-      instructions: `<p>Nenápadně mě vyfoť v okamžiku, kdy podle Tebe vypadám nejspokojeněji.</p><p>Fotografii odhal až poslední večer.</p>`,
-      photos: [{ key: 'photo', label: 'Tajný portrét' }]
+      instructions: `<p>Nenápadně vyfoť Pavla v okamžiku, kdy podle Tebe vypadá nejspokojeněji.</p><p>Fotografii mu odhal až poslední večer.</p>`,
+      photos: [{ key: 'photo', label: 'Tajný portrét Pavla' }]
     },
     {
-      id: 'sp-02', section: 'spicy', icon: '💋', title: 'Ukradený polibek', place: 'Kdekoli, kde ho nečekám', spicy: 0,
-      instructions: `<p>Během výletu mi dej polibek na místě nebo v okamžiku, kdy bych ho vůbec nečekal.</p>`,
+      id: 'sp-02', section: 'spicy', icon: '💋', title: 'Ukradený polibek', place: 'Kdekoli, kde ho Pavel nečeká', spicy: 0,
+      instructions: `<p>Během výletu dej Pavlovi polibek na místě nebo v okamžiku, kdy ho vůbec nebude čekat.</p>`,
       fields: [{ type: 'textarea', key: 'moment', label: 'Kdy se to povedlo?', placeholder: 'Volitelné — může zůstat jen mezi námi.' }]
     },
     {
       id: 'sp-03', section: 'spicy', icon: '💃', title: 'Večerní taneček', place: 'Po návratu na ubytování', spicy: 1,
-      instructions: `<p>Vyber jednu píseň. Po návratu na ubytování na ni musím zatancovat hot taneček.</p>`,
+      instructions: `<p>Vyber jednu píseň. Po návratu na ubytování na ni Pavel zatancuje jen pro Tebe.</p>`,
       fields: [{ type: 'text', key: 'song', label: 'Vybraná píseň', placeholder: 'Název skladby' }]
     },
     {
       id: 'sp-04', section: 'spicy', icon: '💌', title: 'Tajné přání', place: 'Na společný večer', secret: true, spicy: 0,
-      instructions: `<p>Zapiš jedno malé přání pro společný večer. Zobrazíš mi ho až po návratu na ubytování.</p>`,
+      instructions: `<p>Zapiš jedno malé přání pro společný večer. Pavlovi ho zobrazíš až po návratu na ubytování.</p>`,
       fields: [{ type: 'textarea', key: 'wish', label: 'Tajné přání', placeholder: 'Co by Ti dnes udělalo radost?' }]
     },
     {
       id: 'sp-05', section: 'spicy', icon: '🥰', title: 'Pět komplimentů', place: 'Během jednoho dne', spicy: 0,
-      instructions: `<p>Použij během dne pět různých komplimentů. Večer mi je přečti a já popravdě řeknu, kolika z nich jsem si všiml.</p>`,
+      instructions: `<p>Řekni během dne Pavlovi pět různých komplimentů a zapiš je sem. Večer mu je přečti a on popravdě řekne, kolika z nich si všiml.</p>`,
       fields: [
         { type: 'text', key: 'c1', label: 'Kompliment 1', placeholder: 'První kompliment' },
         { type: 'text', key: 'c2', label: 'Kompliment 2', placeholder: 'Druhý kompliment' },
         { type: 'text', key: 'c3', label: 'Kompliment 3', placeholder: 'Třetí kompliment' },
         { type: 'text', key: 'c4', label: 'Kompliment 4', placeholder: 'Čtvrtý kompliment' },
         { type: 'text', key: 'c5', label: 'Kompliment 5', placeholder: 'Pátý kompliment' },
-        { type: 'number', key: 'noticed', label: 'Kolika jsem si všiml?', placeholder: '0', min: 0, max: 5 }
+        { type: 'number', key: 'noticed', label: 'Kolika si Pavel všiml?', placeholder: '0', min: 0, max: 5 }
       ]
     },
     {
       id: 'sp-06', section: 'spicy', icon: '✉️', title: 'Hotelová obálka', place: 'Otevřít až na pokoji', secret: true, spicy: 2,
-      instructions: `<p>Napiš, co bys dnes večer chtěla zažít — neboj se odvázat. Odpověď napiš co nejkonkrétněji a zamkni ji na večer.</p>`,
+      instructions: `<p>Napiš Pavlovi, co bys dnes večer chtěla zažít — neboj se odvázat. Odpověď napiš co nejkonkrétněji a zamkni ji na večer.</p>`,
       fields: [{ type: 'textarea', key: 'fantasy', label: 'Obsah hotelové obálky', placeholder: 'Dnes večer bych chtěla…' }]
     },
     {
       id: 'sp-07', section: 'spicy', icon: '🎟️', title: 'Tři žetony', place: 'Kdykoli v soukromí', special: 'tokens', spicy: 3,
-      instructions: `<p>Získáváš tři žetony. Je jen na Tobě, jaké vybereš a kdy je použiješ. Stejnou možnost můžeš zvolit i vícekrát.</p><p><strong>Žeton je jasná žádost, ne automatická povinnost — platí, když je nám oběma v danou chvíli příjemný.</strong></p>`,
+      instructions: `<p>Získáváš tři žetony. Je jen na Tobě, jaké vybereš a kdy je použiješ. Stejnou možnost můžeš zvolit i vícekrát.</p><p><strong>Když žeton použiješ, řekni to Pavlovi nahlas. Platí jen tehdy, když je to příjemné vám oběma.</strong></p>`,
       tokenOptions: ['Masáž', 'Masáž nohou', 'Společná sprcha', 'Sex – teď hned!', 'Spiderman pusa', 'Striptýz']
     },
     {
-      id: 'sp-08', section: 'spicy', icon: '🔥', title: 'Co je na mně dnes nejvíc sexy', place: 'Večer', spicy: 1,
-      instructions: `<p>Řekni mi jednu konkrétní věc, která Ti na mně během dne připadala přitažlivá.</p><p>Nesmí to být obecné „jsi hezký“. Musí jít o konkrétní okamžik, gesto nebo chování.</p>`,
-      fields: [{ type: 'textarea', key: 'answer', label: 'Konkrétní okamžik', placeholder: 'Dnes mi na Tobě přišlo sexy, když…' }]
+      id: 'sp-08', section: 'spicy', icon: '🔥', title: 'Co je dnes na Pavlovi nejvíc sexy', place: 'Večer', spicy: 1,
+      instructions: `<p>Řekni Pavlovi jednu konkrétní věc, která Ti na něm během dne připadala přitažlivá.</p><p>Nesmí to být obecné „jsi hezký“. Musí jít o konkrétní okamžik, gesto nebo chování.</p>`,
+      fields: [{ type: 'textarea', key: 'answer', label: 'Konkrétní okamžik', placeholder: 'Dnes mi na Pavlovi přišlo sexy, když…' }]
     },
     {
       id: 'sp-09', section: 'spicy', icon: '🗺️', title: 'Polibková mapa', place: 'Odhalit večer', secret: true, spicy: 2,
-      instructions: `<p>Do skryté odpovědi napiš tři místa na mém těle, kam chceš večer dostat polibek:</p><ul><li>jedno běžné,</li><li>jedno méně očekávané,</li><li>jedno, které mi odhalíš až těsně před splněním.</li></ul>`,
+      instructions: `<p>Do skryté odpovědi napiš tři místa na svém těle, kam chceš, aby Tě Pavel večer políbil:</p><ul><li>jedno běžné,</li><li>jedno méně očekávané,</li><li>jedno, které Pavlovi odhalíš až těsně před splněním.</li></ul>`,
       fields: [
         { type: 'text', key: 'normal', label: 'Jedno běžné', placeholder: 'První místo' },
         { type: 'text', key: 'unexpected', label: 'Jedno méně očekávané', placeholder: 'Druhé místo' },
@@ -1197,19 +1197,19 @@
     },
     {
       id: 'sp-10', section: 'spicy', icon: '🚫', title: 'Jedna věta bez cenzury', place: 'Otevřít až na pokoji', secret: true, spicy: 3,
-      instructions: `<p>Dokonči větu co nejkonkrétněji:</p><blockquote>Dnes večer chci, abys mi…</blockquote>`,
-      fields: [{ type: 'textarea', key: 'sentence', label: 'Jedna věta bez cenzury', placeholder: 'Dnes večer chci, abys mi…' }]
+      instructions: `<p>Dokonči větu co nejkonkrétněji:</p><blockquote>Pavle, dnes večer chci, abys mi…</blockquote>`,
+      fields: [{ type: 'textarea', key: 'sentence', label: 'Jedna věta bez cenzury', placeholder: 'Pavle, dnes večer chci, abys mi…' }]
     },
     {
       id: 'sp-11', section: 'spicy', icon: '👔', title: 'Hotelový dress code', place: 'Po příchodu na pokoj', spicy: 2,
-      instructions: `<p>Vyber jeden kus oblečení, který si mám po příchodu na pokoj ponechat, dokud mi nedovolíš ho sundat.</p><p>Může jít o košili, tričko, spodní prádlo nebo cokoli jiného.</p>`,
-      fields: [{ type: 'text', key: 'clothing', label: 'Vybraný kus oblečení', placeholder: 'Co si mám nechat na sobě?' }]
+      instructions: `<p>Vyber jeden kus oblečení, který si má Pavel po příchodu na pokoj ponechat, dokud mu nedovolíš ho sundat.</p><p>Může jít o košili, tričko, spodní prádlo nebo cokoli jiného.</p>`,
+      fields: [{ type: 'text', key: 'clothing', label: 'Vybraný kus oblečení', placeholder: 'Co si má Pavel nechat na sobě?' }]
     },
     {
       id: 'sp-12', section: 'spicy', icon: '👑', title: 'Královský rozkaz – soukromá verze', place: 'Na pokoji', spicy: 3,
-      instructions: `<p>Po návratu na pokoj vydáš jeden erotický rozkaz, který platí do půlnoci nebo dokud ho nezrušíš.</p><p>Může určit, co mám udělat, co si mám sundat nebo kam Tě mám políbit.</p>`,
+      instructions: `<p>Po návratu na pokoj vydáš Pavlovi jeden erotický rozkaz, který platí do půlnoci nebo dokud ho nezrušíš.</p><p>Může určit, co má Pavel udělat, co si má sundat nebo kam Tě má políbit.</p>`,
       fields: [
-        { type: 'textarea', key: 'order', label: 'Soukromé nařízení', placeholder: 'Nařizuji Ti…' },
+        { type: 'textarea', key: 'order', label: 'Soukromé nařízení', placeholder: 'Pavle, nařizuji Ti…' },
         { type: 'select', key: 'state', label: 'Stav rozkazu', options: ['', 'Připravený', 'Aktivní', 'Zrušený', 'Splněný'] }
       ]
     }
@@ -1325,13 +1325,13 @@
     `;
 
     if (section.id === 'day4') {
-      specialEl.innerHTML = `<div class="silence-card"><strong>Telefon může na chvíli odpočívat.</strong>V areálu se žádné herní úkoly neplní. Reflexní kartu otevři až po odjezdu, v klidu a bez spěchu.</div>`;
+      specialEl.innerHTML = `<div class="silence-card"><strong>V areálu se žádné úkoly neplní.</strong>Reflexní kartu otevři až po odjezdu, v klidu a bez spěchu.</div>`;
     } else if (section.id === 'spicy' && !state.spicyUnlocked) {
       specialEl.innerHTML = `
         <div class="spicy-gate">
           <div class="gate-icon">🌶️</div>
           <h3>Tajná část je zamčená</h3>
-          <p>Uvnitř čeká romantika, provokace i pár úkolů pouze za zavřenými dveřmi. Odemknutí nemá žádný časovač — stačí ho potvrdit.</p>
+          <p>Uvnitř čeká romantika, provokace i pár úkolů pouze za zavřenými dveřmi. Odemkni ji, až na ni bude správná chvíle.</p>
           <button type="button" class="primary-button" id="unlockSpicy">Odemknout tajnou část</button>
         </div>
       `;
@@ -1339,13 +1339,13 @@
         const yes = await askConfirm({
           icon: '🌶️',
           title: 'Odemknout tajnou část?',
-          text: 'Úkoly se zobrazí hned. Plní se jen tehdy, když je vám oběma daná věc příjemná.',
+          text: 'Úkoly se zobrazí hned. Vyberte si jen ty, které jsou příjemné vám oběma.',
           confirm: 'Ano, odemknout'
         });
         if (yes) {
           state.spicyUnlocked = true;
           saveState();
-          showToast('Tajná část odemčena. Kraków začíná být zajímavý.');
+          showToast('Tajná část je odemčená.');
           render();
         }
       });
@@ -1398,7 +1398,7 @@
     const statusClass = isCompleted ? 'completed' : '';
     const badges = [
       task.spicy ? `<span class="spice-badge" aria-label="${task.spicy} papričky">${spiceText(task.spicy)}</span>` : '',
-      task.secret ? `<span class="secret-badge">🔒 lze zamknout</span>` : ''
+      task.secret ? `<span class="secret-badge">🔒 tajná odpověď</span>` : ''
     ].join('');
 
     const answerHtml = task.special === 'ratingPair'
@@ -1459,7 +1459,7 @@
         <div class="locked-answer ${secretLocked ? 'show' : ''}" data-locked-area="${task.id}">
           <div class="lock-icon">🔐</div>
           <strong>Odpověď je zamčená</strong>
-          <p>Obsah se zobrazí až po ručním potvrzení. Žádný časovač, žádné podvádění s hodinkami.</p>
+          <p>Obsah se zobrazí až po ručním potvrzení.</p>
           <button type="button" class="small-button secret-action" data-unlock-task="${task.id}">Odhalit odpověď</button>
         </div>
       ` : ''}
@@ -1513,9 +1513,9 @@
         : `<div class="rating-row"><input class="input" type="number" min="1" max="10" value="${escapeHtml(value)}" data-pair-value="${side}" data-task="${task.id}" ${revealed || readOnly ? 'disabled' : ''}><button type="button" class="rating-lock" data-pair-lock="${side}" data-task="${task.id}" ${revealed || readOnly ? 'disabled' : ''}>Zamknout</button></div>`}</div>`;
     };
     const bothLocked = pair.lockA && pair.lockB;
-    const result = revealed ? `<div class="rating-reveal">Moje hodnocení: ${escapeHtml(pair.valueA)} / 10 · Jeho hodnocení: ${escapeHtml(pair.valueB)} / 10${pair.valueA && pair.valueB ? ` · Rozdíl ${Math.abs(Number(pair.valueA) - Number(pair.valueB))}` : ''}</div>` : '';
+    const result = revealed ? `<div class="rating-reveal">Moje hodnocení: ${escapeHtml(pair.valueA)} / 10 · Pavlovo hodnocení: ${escapeHtml(pair.valueB)} / 10${pair.valueA && pair.valueB ? ` · Rozdíl ${Math.abs(Number(pair.valueA) - Number(pair.valueB))}` : ''}</div>` : '';
 
-    return `<div class="answer-area">${(task.photos || []).map(photo => renderPhotoField(task, photo, readOnly)).join('')}<div class="pair-rating">${slot('A', 'Moje hodnocení')}${slot('B', 'Jeho hodnocení')}</div><div class="answer-actions"><button type="button" class="small-button secret-action" data-pair-reveal data-task="${task.id}" ${bothLocked && !revealed && !readOnly ? '' : 'disabled'}>${revealed ? 'Odpovědi odhaleny' : 'Odhalit odpovědi společně'}</button>${revealed ? `<button type="button" class="small-button" data-pair-reset data-task="${task.id}" ${readOnly ? 'disabled' : ''}>Zadat znovu</button>` : ''}</div>${result}${readOnly ? '<div class="completed-note">✓ Hodnocení je uložené. Pro změnu použij dole „Upravit odpověď“.</div>' : ''}</div>`;
+    return `<div class="answer-area">${(task.photos || []).map(photo => renderPhotoField(task, photo, readOnly)).join('')}<div class="pair-rating">${slot('A', 'Moje hodnocení')}${slot('B', 'Pavlovo hodnocení')}</div><div class="answer-actions"><button type="button" class="small-button secret-action" data-pair-reveal data-task="${task.id}" ${bothLocked && !revealed && !readOnly ? '' : 'disabled'}>${revealed ? 'Odpovědi odhaleny' : 'Odhalit odpovědi společně'}</button>${revealed ? `<button type="button" class="small-button" data-pair-reset data-task="${task.id}" ${readOnly ? 'disabled' : ''}>Zadat znovu</button>` : ''}</div>${result}${readOnly ? '<div class="completed-note">✓ Hodnocení je uložené. Pro změnu použij dole „Upravit odpověď“.</div>' : ''}</div>`;
   }
 
   function renderTokens(task, taskState, readOnly = false) {
@@ -1587,7 +1587,7 @@
         } else {
           taskState.status = taskState.status === next ? '' : next;
           taskState.editing = false;
-          if (next === 'completed') showToast('Úkol splněn. Krásně se zazelenal.');
+          if (next === 'completed') showToast('Úkol je označený jako splněný.');
         }
 
         saveState();
@@ -1638,7 +1638,7 @@
         if (yes) {
           getTaskState(taskId).locked = true;
           saveState();
-          showToast('Odpověď zamčena. Klíč má večer.');
+          showToast('Odpověď je zamčená.');
           render();
         }
       });
@@ -1648,7 +1648,7 @@
       button.addEventListener('click', async () => {
         const taskId = button.dataset.unlockTask;
         const task = tasks.find(item => item.id === taskId);
-        const yes = await askConfirm({ icon: '💌', title: 'Opravdu odhalit odpověď?', text: `Obsah úkolu „${task.title}“ se znovu zobrazí. Tohle je večerní tlačítko — nebo velmi sebevědomé odpolední rozhodnutí.`, confirm: 'Ano, odhalit' });
+        const yes = await askConfirm({ icon: '💌', title: 'Opravdu odhalit odpověď?', text: `Obsah úkolu „${task.title}“ se znovu zobrazí.`, confirm: 'Ano, odhalit' });
         if (yes) {
           getTaskState(taskId).locked = false;
           saveState();
@@ -1682,7 +1682,7 @@
     taskListEl.querySelectorAll('[data-pair-reveal]').forEach(button => {
       button.addEventListener('click', async () => {
         const taskId = button.dataset.task;
-        const yes = await askConfirm({ icon: '🥖', title: 'Odhalit obě hodnocení?', text: 'Telefon položte mezi sebe a výsledek odhalte společně.', confirm: 'Odhalit verdikt' });
+        const yes = await askConfirm({ icon: '🥖', title: 'Odhalit obě hodnocení?', text: 'Až budete oba připravení, odhalte hodnocení společně.', confirm: 'Odhalit verdikt' });
         if (yes) {
           getTaskState(taskId).pair.revealed = true;
           saveState();
@@ -1720,7 +1720,7 @@
           return;
         }
         if (!token.used) {
-          const yes = await askConfirm({ icon: '🎟️', title: `Použít žeton: ${token.choice}?`, text: 'Řekni nahlas, že používáš žeton. Pak už je to na vás dvou.', confirm: 'Použít žeton' });
+          const yes = await askConfirm({ icon: '🎟️', title: `Použít žeton: ${token.choice}?`, text: 'Řekni Pavlovi nahlas, že používáš žeton.', confirm: 'Použít žeton' });
           if (!yes) return;
           token.used = true;
           showToast(`Žeton použit: ${token.choice}.`);
@@ -1907,7 +1907,7 @@
   document.getElementById('resetButton').addEventListener('click', async () => {
     const first = await askConfirm({ icon: '⚠️', title: 'Smazat celou hru?', text: 'Zmizí všechny texty, fotky, stav úkolů i tajné odpovědi. Tuto akci nejde vrátit.', confirm: 'Pokračovat' });
     if (!first) return;
-    const second = await askConfirm({ icon: '🗑️', title: 'Opravdu úplně všechno?', text: 'Poslední kontrola. Kraków si paměť ponechá, aplikace ne.', confirm: 'Ano, smazat vše' });
+    const second = await askConfirm({ icon: '🗑️', title: 'Potvrdit smazání?', text: 'Opravdu chceš smazat všechny odpovědi, fotografie a stav úkolů?', confirm: 'Ano, smazat vše' });
     if (!second) return;
     state = JSON.parse(JSON.stringify(defaultState));
     localStorage.removeItem(APP_KEY);
