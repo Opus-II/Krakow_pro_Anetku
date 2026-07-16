@@ -1366,6 +1366,14 @@
 
   async function renderTasks() {
     const sectionId = state.activeSection;
+
+    // Zapamatuj si, které úkoly jsou právě rozbalené.
+    // Díky tomu se karta po zamknutí odpovědi ani po jiné drobné změně sama nezavře.
+    const openTaskIds = new Set(
+      [...taskListEl.querySelectorAll('[data-task-card][open]')]
+        .map(card => card.dataset.taskCard)
+    );
+
     if (sectionId === 'spicy' && !state.spicyUnlocked) {
       taskListEl.innerHTML = '';
       return;
@@ -1373,6 +1381,11 @@
 
     const visibleTasks = tasks.filter(task => task.section === sectionId);
     taskListEl.innerHTML = visibleTasks.map(renderTaskCard).join('');
+
+    openTaskIds.forEach(taskId => {
+      taskListEl.querySelector(`[data-task-card="${taskId}"]`)?.setAttribute('open', '');
+    });
+
     bindTaskEvents(visibleTasks);
     await hydratePhotos(visibleTasks);
   }
