@@ -318,7 +318,6 @@
       transition: border-color .2s ease, transform .2s ease, opacity .2s ease;
     }
     .task-card[open] { border-color: rgba(112,31,59,.31); }
-    .task-card.skipped { opacity: .67; }
     .task-card.spicy {
       border-color: rgba(179,58,36,.22);
       background:
@@ -608,7 +607,7 @@
 
     .task-footer {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
       gap: 9px;
       margin-top: 17px;
       padding-top: 14px;
@@ -625,11 +624,6 @@
       color: var(--green);
       border-color: rgba(40,123,85,.35);
       background: var(--green-light);
-    }
-    .status-button.skip.active {
-      color: #665d61;
-      background: #eee9e7;
-      border-color: rgba(90,80,84,.25);
     }
     .status-button.edit {
       color: #6d4a12;
@@ -881,8 +875,8 @@
     <section class="hero">
       <div class="eyebrow">🧭 výletní hra jen pro Tebe</div>
       <h1>Kraków pro Anetku</h1>
-      <p class="hero-subtitle">Památky, jídlo, romantika a možná i nějaká ta erotika...😈</p>
-      <div class="hero-note"><span>💌</span><span>Nemusíš splnit všechno. Vybírej mise podle nálady, hlavní úkol je užít si náš výlet na maximum.</span></div>
+      <p class="hero-subtitle">Trochu památky, trochu romantika, trochu chaos a večer možná i víc než trochu chilli.</p>
+      <div class="hero-note"><span>💌</span><span>Nemusíš splnit všechno. Vybírej si mise podle nálady — hlavní úkol je užít si náš výlet.</span></div>
       <div class="overall-progress">
         <div class="progress-head"><span>Celý výlet</span><span id="overallProgressText">0 splněno</span></div>
         <div class="progress-track"><div class="progress-bar" id="overallProgressBar"></div></div>
@@ -892,10 +886,9 @@
     <details class="info-card">
       <summary><span>💡</span><span>Jak hra funguje</span></summary>
       <div class="info-body">
-        <p>Všechno se ukládá samo — rozepsané odpovědi, splněné mise i fotky na Tebe počkají ve Tvém telefonu.</p>
+        <p>Všechno se ukládá samo — rozepsané odpovědi, splněné mise i fotky na Tebe počkají v tomhle zařízení.</p>
         <ul>
           <li><strong>Úkoly můžeš plnit na přeskáčku.</strong> Otevři si zrovna ten, na který je čas a nálada, a k ostatním se klidně vrať později.</li>
-          <li>Když se Ti některá mise nehodí, dej <strong>Přeskočit</strong>. Třeba se k ní vrátíš jindy, třeba ne. Kolik úkolů splníš je jen na Tobě (Více je samožřejmě lépe 😂)</li>
           <li>Po klepnutí na <strong>Splněno</strong> se úkol zazelená a odpověď se zamkne proti nechtěnému přepsání.</li>
           <li>Potřebuješ něco opravit? Použij <strong>Upravit odpověď</strong> a potvrď, že ji opravdu chceš znovu otevřít.</li>
           <li>U tajných odpovědí použij <strong>Zamknout na večer</strong>. Znovu se ukážou až po potvrzení odhalení.</li>
@@ -1260,9 +1253,14 @@
   function loadState() {
     try {
       const stored = JSON.parse(localStorage.getItem(APP_KEY));
-      return stored && typeof stored === 'object'
-        ? { ...JSON.parse(JSON.stringify(defaultState)), ...stored, taskData: stored.taskData || {} }
-        : JSON.parse(JSON.stringify(defaultState));
+      if (stored && typeof stored === 'object') {
+        const loaded = { ...JSON.parse(JSON.stringify(defaultState)), ...stored, taskData: stored.taskData || {} };
+        Object.values(loaded.taskData).forEach(item => {
+          if (item && item.status === 'skipped') item.status = '';
+        });
+        return loaded;
+      }
+      return JSON.parse(JSON.stringify(defaultState));
     } catch (error) {
       console.warn('Nepodařilo se načíst stav:', error);
       return JSON.parse(JSON.stringify(defaultState));
@@ -1327,13 +1325,11 @@
     const section = sections.find(item => item.id === state.activeSection) || sections[0];
     const sectionTasks = tasks.filter(task => task.section === section.id);
     const completed = sectionTasks.filter(task => getTaskState(task.id).status === 'completed').length;
-    const skipped = sectionTasks.filter(task => getTaskState(task.id).status === 'skipped').length;
-
     headerEl.innerHTML = `
       <div class="section-kicker">${section.icon} ${escapeHtml(section.kicker)}</div>
       <h2>${escapeHtml(section.title)}</h2>
       <p class="section-description">${escapeHtml(section.description)}</p>
-      <div class="section-stats"><span>${completed} splněno</span><span>·</span><span>${skipped} přeskočeno</span><span>·</span><span>${sectionTasks.length} misí</span></div>
+      <div class="section-stats"><span>${completed} z ${sectionTasks.length} splněno</span></div>
     `;
 
     if (section.id === 'day4') {
@@ -1394,7 +1390,7 @@
     const isCompleted = taskState.status === 'completed';
     const isEditing = isCompleted && taskState.editing;
     const readOnly = isCompleted && !isEditing;
-    const statusClass = isCompleted ? 'completed' : taskState.status === 'skipped' ? 'skipped' : '';
+    const statusClass = isCompleted ? 'completed' : '';
     const badges = [
       task.spice ? `<span class="spice-badge">${spiceText(task.spice)}</span>` : '',
       task.secret ? `<span class="secret-badge">🔒 lze zamknout</span>` : ''
@@ -1411,8 +1407,7 @@
         ? `<button type="button" class="status-button save-edit" data-save-edit="${task.id}">✓ Uložit úpravy</button>`
         : `<button type="button" class="status-button complete active" data-status="completed" data-task="${task.id}">✓ Splněno</button>
            <button type="button" class="status-button edit" data-edit-task="${task.id}">✏️ Upravit odpověď</button>`
-      : `<button type="button" class="status-button complete" data-status="completed" data-task="${task.id}">✓ Splněno</button>
-         <button type="button" class="status-button skip ${taskState.status === 'skipped' ? 'active' : ''}" data-status="skipped" data-task="${task.id}">Přeskočit</button>`;
+      : `<button type="button" class="status-button complete" data-status="completed" data-task="${task.id}">✓ Splněno</button>`;
 
     return `
       <details class="task-card ${task.section === 'spicy' ? 'spicy' : ''} ${statusClass} ${isEditing ? 'editing' : ''}" data-task-card="${task.id}" ${isEditing ? 'open' : ''}>
@@ -1748,9 +1743,8 @@
   function updateProgress() {
     const visibleTasks = tasks.filter(task => task.section !== 'spicy' || state.spicyUnlocked);
     const completed = visibleTasks.filter(task => getTaskState(task.id).status === 'completed').length;
-    const skipped = visibleTasks.filter(task => getTaskState(task.id).status === 'skipped').length;
     const percent = visibleTasks.length ? Math.round((completed / visibleTasks.length) * 100) : 0;
-    overallTextEl.textContent = `${completed} splněno · ${skipped} přeskočeno`;
+    overallTextEl.textContent = `${completed} z ${visibleTasks.length} splněno`;
     overallBarEl.style.width = `${percent}%`;
   }
 
