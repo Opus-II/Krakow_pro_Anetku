@@ -366,6 +366,27 @@
       color: #59444e;
     }
     .anniversary-card .primary-button { margin-top: 15px; }
+    .anniversary-countdown {
+      display: grid;
+      gap: 3px;
+      margin-top: 15px;
+      padding: 13px 14px;
+      border: 1px solid rgba(200,149,67,.32);
+      border-radius: 14px;
+      color: #6d4a12;
+      background: rgba(255,255,255,.66);
+    }
+    .anniversary-countdown span {
+      font-size: .78rem;
+      font-weight: 850;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .anniversary-countdown strong {
+      color: var(--wine-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.08rem;
+    }
     .anniversary-message {
       margin-top: 16px !important;
       padding: 16px;
@@ -1092,6 +1113,8 @@
   const DB_NAME = 'krakow-pro-anetku-photos';
   const DB_VERSION = 1;
   const STORE_NAME = 'photos';
+  // Odemčení podle místního data a času nastaveného v telefonu.
+  const ANNIVERSARY_UNLOCK_AT = new Date(2026, 7, 3, 0, 0, 0);
 
   const sections = [
     { id: 'day1', icon: '✈️', tab: 'Den 1', kicker: 'Přílet · centrum · galerie', title: 'První setkání s Krakovem', description: 'První polština, Rynek, Sukiennice, bazilika a galerie.' },
@@ -1427,6 +1450,7 @@
   let dbPromise = null;
   let modalResolver = null;
   let toastTimer = null;
+  let anniversaryCountdownTimer = null;
   const photoUrls = new Map();
 
   const tabsEl = document.getElementById('tabs');
@@ -1506,6 +1530,66 @@
     return level ? Array.from({ length: level }, () => '🌶️').join(' ') : '';
   }
 
+  function anniversaryIsAvailable() {
+    return Date.now() >= ANNIVERSARY_UNLOCK_AT.getTime();
+  }
+
+  function czechCount(value, one, few, many) {
+    const mod10 = value % 10;
+    const mod100 = value % 100;
+    if (mod10 === 1 && mod100 !== 11) return one;
+    if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return few;
+    return many;
+  }
+
+  function formatAnniversaryCountdown(milliseconds) {
+    let seconds = Math.max(0, Math.floor(milliseconds / 1000));
+    const days = Math.floor(seconds / 86400);
+    seconds %= 86400;
+    const hours = Math.floor(seconds / 3600);
+    seconds %= 3600;
+    const minutes = Math.floor(seconds / 60);
+    seconds %= 60;
+
+    const parts = [];
+    if (days) parts.push(`${days} ${czechCount(days, 'den', 'dny', 'dní')}`);
+    parts.push(`${hours} ${czechCount(hours, 'hodina', 'hodiny', 'hodin')}`);
+    parts.push(`${minutes} ${czechCount(minutes, 'minuta', 'minuty', 'minut')}`);
+    parts.push(`${seconds} ${czechCount(seconds, 'sekunda', 'sekundy', 'sekund')}`);
+    return parts.join(' · ');
+  }
+
+  function stopAnniversaryCountdown() {
+    if (anniversaryCountdownTimer) {
+      clearInterval(anniversaryCountdownTimer);
+      anniversaryCountdownTimer = null;
+    }
+  }
+
+  function startAnniversaryCountdown() {
+    stopAnniversaryCountdown();
+
+    const update = () => {
+      const countdown = document.getElementById('anniversaryCountdownValue');
+      if (!countdown) {
+        stopAnniversaryCountdown();
+        return;
+      }
+
+      const remaining = ANNIVERSARY_UNLOCK_AT.getTime() - Date.now();
+      if (remaining <= 0) {
+        stopAnniversaryCountdown();
+        renderHeader();
+        return;
+      }
+
+      countdown.textContent = formatAnniversaryCountdown(remaining);
+    };
+
+    update();
+    anniversaryCountdownTimer = setInterval(update, 1000);
+  }
+
   function renderTabs() {
     tabsEl.innerHTML = sections.map(section => `
       <button type="button" class="tab-button ${section.spicy ? 'spicy-tab' : ''} ${state.activeSection === section.id ? 'active' : ''}" data-section="${section.id}">
@@ -1531,6 +1615,7 @@
   }
 
   function renderHeader() {
+    stopAnniversaryCountdown();
     const section = sections.find(item => item.id === state.activeSection) || sections[0];
     const sectionTasks = tasks.filter(task => task.section === section.id);
     const completed = sectionTasks.filter(task => getTaskState(task.id).status === 'completed').length;
@@ -1542,7 +1627,9 @@
     `;
 
     if (section.id === 'day3') {
-      if (state.anniversaryUnlocked) {
+      const anniversaryAvailable = anniversaryIsAvailable();
+
+      if (state.anniversaryUnlocked && anniversaryAvailable) {
         specialEl.innerHTML = `
           <div class="anniversary-card unlocked">
             <div class="anniversary-card-content">
@@ -1552,6 +1639,22 @@
             </div>
           </div>
         `;
+      } else if (!anniversaryAvailable) {
+        specialEl.innerHTML = `
+          <div class="anniversary-card">
+            <div class="anniversary-card-content">
+              <div class="anniversary-kicker">🔒 Speciální přání od Pavla</div>
+              <h3>Dnes nejde jen o Wieliczku, ale hlavně o nás ❤️</h3>
+              <p>Výroční přání se odemkne 3. srpna. Do té doby zůstane schované.</p>
+              <div class="anniversary-countdown" aria-live="polite">
+                <span>Do odemknutí zbývá</span>
+                <strong id="anniversaryCountdownValue">Počítám…</strong>
+              </div>
+              <button type="button" class="primary-button" disabled>🔒 Odemkne se 3. 8.</button>
+            </div>
+          </div>
+        `;
+        startAnniversaryCountdown();
       } else {
         specialEl.innerHTML = `
           <div class="anniversary-card">
@@ -1564,6 +1667,12 @@
           </div>
         `;
         document.getElementById('unlockAnniversary').addEventListener('click', async () => {
+          if (!anniversaryIsAvailable()) {
+            showToast('Výroční přání se odemkne 3. srpna.');
+            renderHeader();
+            return;
+          }
+
           const yes = await askConfirm({
             icon: '❤️',
             title: 'Odemknout výroční přání?',
@@ -2393,6 +2502,7 @@
   backTopEl.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
   window.addEventListener('beforeunload', () => {
+    stopAnniversaryCountdown();
     for (const url of photoUrls.values()) URL.revokeObjectURL(url);
   });
 
