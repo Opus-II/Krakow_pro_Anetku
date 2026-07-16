@@ -306,6 +306,78 @@
       font-size: 1.25rem;
     }
 
+    .anniversary-card {
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 14px;
+      padding: 20px;
+      border: 1px solid rgba(200,149,67,.38);
+      border-radius: 23px;
+      background:
+        radial-gradient(circle at 92% 6%, rgba(200,149,67,.19), transparent 12rem),
+        linear-gradient(145deg, #fffaf0, #fffdf9);
+      box-shadow: var(--shadow-soft);
+    }
+    .anniversary-card::after {
+      content: "♥";
+      position: absolute;
+      right: -10px;
+      bottom: -42px;
+      color: rgba(112,31,59,.055);
+      font-family: Georgia, serif;
+      font-size: 130px;
+      line-height: 1;
+      transform: rotate(-12deg);
+      pointer-events: none;
+    }
+    .anniversary-card.unlocked {
+      border-color: rgba(201,79,114,.32);
+      background:
+        radial-gradient(circle at 92% 6%, rgba(201,79,114,.13), transparent 12rem),
+        linear-gradient(145deg, #fff5f7, #fffdf9);
+    }
+    .anniversary-card-content {
+      position: relative;
+      z-index: 1;
+    }
+    .anniversary-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      color: var(--wine);
+      background: var(--gold-light);
+      font-size: .75rem;
+      font-weight: 900;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+    .anniversary-card h3 {
+      margin: 0;
+      color: var(--wine-dark);
+      font-family: Georgia, serif;
+      font-size: 1.45rem;
+      line-height: 1.15;
+    }
+    .anniversary-card p {
+      margin: 10px 0 0;
+      color: #59444e;
+    }
+    .anniversary-card .primary-button { margin-top: 15px; }
+    .anniversary-message {
+      margin-top: 16px !important;
+      padding: 16px;
+      border-left: 4px solid var(--rose);
+      border-radius: 0 15px 15px 0;
+      color: var(--ink) !important;
+      background: rgba(255,255,255,.72);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.03rem;
+      white-space: pre-wrap;
+    }
+
     .task-list { display: grid; gap: 13px; }
 
     .task-card {
@@ -1347,6 +1419,7 @@
   const defaultState = {
     activeSection: 'day1',
     spicyUnlocked: false,
+    anniversaryUnlocked: false,
     taskData: {}
   };
 
@@ -1468,7 +1541,44 @@
       <div class="section-stats"><span>${completed} splněno</span></div>
     `;
 
-    if (section.id === 'day4') {
+    if (section.id === 'day3') {
+      if (state.anniversaryUnlocked) {
+        specialEl.innerHTML = `
+          <div class="anniversary-card unlocked">
+            <div class="anniversary-card-content">
+              <div class="anniversary-kicker">❤️ Speciální přání od Pavla</div>
+              <h3>Pro Anetku</h3>
+              <p class="anniversary-message">TEXTPROANETKUVLOZZDE</p>
+            </div>
+          </div>
+        `;
+      } else {
+        specialEl.innerHTML = `
+          <div class="anniversary-card">
+            <div class="anniversary-card-content">
+              <div class="anniversary-kicker">🔒 Speciální přání od Pavla</div>
+              <h3>Dnes nejde jen o Wieliczku, ale hlavně o nás ❤️</h3>
+              <p>Uvnitř na Tebe čeká osobní vzkaz.</p>
+              <button type="button" class="primary-button" id="unlockAnniversary">Odemknout výroční přání</button>
+            </div>
+          </div>
+        `;
+        document.getElementById('unlockAnniversary').addEventListener('click', async () => {
+          const yes = await askConfirm({
+            icon: '❤️',
+            title: 'Odemknout výroční přání?',
+            text: 'Po odemknutí se zobrazí Pavlův osobní vzkaz a zůstane otevřený.',
+            confirm: 'Odemknout přání'
+          });
+          if (!yes) return;
+
+          state.anniversaryUnlocked = true;
+          saveState();
+          showToast('Výroční přání je odemčené.');
+          render();
+        });
+      }
+    } else if (section.id === 'day4') {
       specialEl.innerHTML = `<div class="silence-card"><strong>V areálu se žádné úkoly neplní.</strong>Obě karty otevři až po odjezdu, v klidu a bez spěchu.</div>`;
     } else if (section.id === 'spicy' && !state.spicyUnlocked) {
       specialEl.innerHTML = `
