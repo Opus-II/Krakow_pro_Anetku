@@ -1030,6 +1030,52 @@
       font-weight: 850;
     }
     .settings-body { margin-top: 13px; }
+    .archive-panel {
+      padding: 15px;
+      border: 1px solid rgba(112,31,59,.15);
+      border-radius: 16px;
+      background: rgba(255,255,255,.68);
+    }
+    .archive-panel h3 {
+      margin: 0 0 6px;
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.16rem;
+    }
+    .archive-panel p { margin: 0; }
+    .archive-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+      margin-top: 13px;
+    }
+    .archive-actions .primary-button,
+    .archive-actions .secondary-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      text-align: center;
+    }
+    .archive-upload { cursor: pointer; }
+    .archive-file-input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+    .archive-note {
+      margin-top: 10px !important;
+      color: var(--muted);
+      font-size: .78rem;
+    }
+    .settings-divider {
+      height: 1px;
+      margin: 16px 0;
+      border: 0;
+      background: rgba(112,31,59,.12);
+    }
 
     .toast {
       position: fixed;
@@ -1114,6 +1160,7 @@
       .token-row { grid-template-columns: auto 1fr; }
       .token-use { grid-column: 1 / -1; }
       .anniversary-code-row { grid-template-columns: 1fr; }
+      .archive-actions { grid-template-columns: 1fr; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1164,8 +1211,20 @@
     <section class="task-list" id="taskList"></section>
 
     <details class="settings-card">
-      <summary>⚙️ Nastavení hry</summary>
+      <summary>⚙️ Uložení deníčku a nastavení</summary>
       <div class="settings-body">
+        <div class="archive-panel">
+          <h3>📖 Uchovat výlet jako deníček</h3>
+          <p>Po výletu si můžeš stáhnout čitelný deníček i úplnou zálohu, ze které půjde hra později obnovit.</p>
+          <div class="archive-actions">
+            <button type="button" class="primary-button" id="downloadDiaryButton">📖 Stáhnout deníček</button>
+            <button type="button" class="secondary-button" id="downloadBackupButton">💾 Stáhnout zálohu</button>
+            <label class="secondary-button archive-upload" for="restoreBackupInput">📥 Obnovit ze zálohy</label>
+            <input class="archive-file-input" type="file" id="restoreBackupInput" accept=".json,application/json">
+          </div>
+          <p class="archive-note">Deníček je samostatný HTML soubor s odpověďmi a fotkami. Záloha slouží k obnovení celé aplikace. Oba soubory mohou obsahovat i soukromé odpovědi, proto je ulož bezpečně.</p>
+        </div>
+        <hr class="settings-divider">
         <p>Reset smaže všechny odpovědi, fotky, stav úkolů i odemčení tajné části v tomto zařízení.</p>
         <button type="button" class="danger-button" id="resetButton">Smazat celou hru</button>
       </div>
@@ -1199,12 +1258,13 @@
   // TESTOVACÍ PŘEPÍNAČ:
   // false = běžný režim, do 3. 8. se ukazuje pouze odpočet
   // true  = testovací režim, pole pro tajný kód se zobrazí okamžitě
-  const ANNIVERSARY_TEST_MODE = true;
+  const ANNIVERSARY_TEST_MODE = false;
 
   // Odemčení podle místního data a času nastaveného v telefonu.
   const ANNIVERSARY_UNLOCK_AT = new Date(2026, 7, 3, 0, 0, 0);
   // Tajný kód pro odemčení výročního vzkazu.
   const ANNIVERSARY_SECRET_CODE = 'DRAK4';
+  const ANNIVERSARY_MESSAGE = '❤️ MILUJU TĚ LÁSKO ❤️';
 
   const sections = [
     { id: 'day1', icon: '✈️', tab: 'Den 1', kicker: 'Přílet · centrum · galerie', title: 'První setkání s Krakovem', description: 'První polština, Rynek, Sukiennice, bazilika a galerie.' },
@@ -1763,7 +1823,7 @@
             <div class="anniversary-card-content">
               <div class="anniversary-kicker">❤️ Speciální vzkaz od Pavla</div>
               <h3>Pro Anetku</h3>
-              <p class="anniversary-message">❤️ MILUJU TĚ LÁSKO ❤️</p>
+              <p class="anniversary-message">${escapeHtml(ANNIVERSARY_MESSAGE)}</p>
             </div>
           </div>
         `;
@@ -2557,6 +2617,377 @@
     });
   }
 
+  async function getAllPhotoRecords() {
+    const db = await openDb();
+    return new Promise((resolve, reject) => {
+      const records = [];
+      const tx = db.transaction(STORE_NAME, 'readonly');
+      const request = tx.objectStore(STORE_NAME).openCursor();
+
+      request.onsuccess = () => {
+        const cursor = request.result;
+        if (!cursor) return;
+        records.push([String(cursor.key), cursor.value]);
+        cursor.continue();
+      };
+      request.onerror = () => reject(request.error);
+      tx.oncomplete = () => resolve(records);
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(tx.error || new Error('Čtení fotografií bylo přerušeno.'));
+    });
+  }
+
+  function blobToDataUrl(blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = () => reject(reader.error || new Error('Fotografii se nepodařilo načíst.'));
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  function dataUrlToBlob(dataUrl) {
+    const match = String(dataUrl || '').match(/^data:([^;,]+)?(;base64)?,(.*)$/s);
+    if (!match) throw new Error('Neplatný formát fotografie v záloze.');
+
+    const mimeType = match[1] || 'application/octet-stream';
+    const encoded = match[3] || '';
+    const binary = match[2] ? atob(encoded) : decodeURIComponent(encoded);
+    const bytes = new Uint8Array(binary.length);
+    for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
+    return new Blob([bytes], { type: mimeType });
+  }
+
+  async function collectPhotosAsDataUrls() {
+    const records = await getAllPhotoRecords();
+    const entries = await Promise.all(records.map(async ([key, blob]) => [key, await blobToDataUrl(blob)]));
+    return Object.fromEntries(entries);
+  }
+
+  function downloadBlob(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+  }
+
+  function fileDateStamp(date = new Date()) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  function diaryHasText(value) {
+    return String(value ?? '').trim().length > 0;
+  }
+
+  function taskHasDiaryContent(task, taskState, photos) {
+    if (taskState.status === 'completed') return true;
+    if (Object.values(taskState.values || {}).some(diaryHasText)) return true;
+    if ((task.photos || []).some(photo => photos[`${task.id}:${photo.key}`])) return true;
+    if (task.special === 'dragonChoice') {
+      return Boolean(taskState.dragon?.head || taskState.dragon?.tail || taskState.dragon?.choice);
+    }
+    if (task.special === 'ratingPair') {
+      return Boolean(taskState.pair?.valueA || taskState.pair?.valueB);
+    }
+    if (task.special === 'tokens') {
+      return (taskState.tokens || []).some(token => token?.choice || token?.used);
+    }
+    if (task.special === 'beerTasting') {
+      return (taskState.beers || []).some(beer => beer?.brand || beer?.rating);
+    }
+    return false;
+  }
+
+  function renderDiaryPhotos(task, photos) {
+    const images = (task.photos || []).map(photo => {
+      const dataUrl = photos[`${task.id}:${photo.key}`];
+      if (!dataUrl) return '';
+      return `<figure class="diary-photo"><img src="${dataUrl}" alt="${escapeHtml(photo.label || task.title)}"><figcaption>${escapeHtml(photo.label || 'Fotografie')}</figcaption></figure>`;
+    }).filter(Boolean);
+    return images.length ? `<div class="diary-photos">${images.join('')}</div>` : '';
+  }
+
+  function renderDiaryRegularAnswers(task, taskState) {
+    const answers = (task.fields || []).map(field => {
+      const value = taskState.values?.[field.key];
+      if (!diaryHasText(value)) return '';
+      return `<div class="diary-answer"><strong>${escapeHtml(field.label)}</strong><p>${escapeHtml(value)}</p></div>`;
+    }).filter(Boolean);
+    return answers.join('');
+  }
+
+  function renderDiarySpecialAnswers(task, taskState) {
+    if (task.special === 'dragonChoice') {
+      const dragon = taskState.dragon || {};
+      if (dragon.choice) {
+        const label = dragon.choice === 'head' ? 'Dračí hlava' : 'Dračí ocas';
+        const value = dragon.choice === 'head' ? dragon.head : dragon.tail;
+        return `<div class="diary-answer"><strong>Drak rozhodl: ${escapeHtml(label)}</strong><p>${escapeHtml(value || 'Bez zapsané možnosti')}</p><small>Druhá možnost zůstala skrytá.</small></div>`;
+      }
+      if (dragon.locked) return `<div class="diary-answer"><strong>Drak rozhodne</strong><p>Obě možnosti byly zamčené, ale výběr ještě nebyl odhalen.</p></div>`;
+      const options = [dragon.head && `Hlava: ${dragon.head}`, dragon.tail && `Ocas: ${dragon.tail}`].filter(Boolean);
+      return options.length ? `<div class="diary-answer"><strong>Připravené možnosti</strong><p>${escapeHtml(options.join('\n'))}</p></div>` : '';
+    }
+
+    if (task.special === 'ratingPair') {
+      const pair = taskState.pair || {};
+      const rows = [
+        diaryHasText(pair.valueA) ? `<div><strong>Moje hodnocení</strong><span>${escapeHtml(pair.valueA)} / 10</span></div>` : '',
+        diaryHasText(pair.valueB) ? `<div><strong>Pavlovo hodnocení</strong><span>${escapeHtml(pair.valueB)} / 10</span></div>` : ''
+      ].filter(Boolean);
+      return rows.length ? `<div class="diary-rating">${rows.join('')}</div>` : '';
+    }
+
+    if (task.special === 'tokens') {
+      const tokens = (taskState.tokens || []).filter(token => token?.choice || token?.used);
+      if (!tokens.length) return '';
+      return `<div class="diary-answer"><strong>Použité a připravené žetony</strong><ul>${tokens.map((token, index) => `<li>Žeton ${index + 1}: ${escapeHtml(token.choice || 'Bez výběru')} — ${token.used ? 'použitý' : 'nepoužitý'}</li>`).join('')}</ul></div>`;
+    }
+
+    if (task.special === 'beerTasting') {
+      const beers = (taskState.beers || []).filter(beer => beer?.brand || beer?.rating);
+      if (!beers.length) return '';
+      return `<div class="diary-table-wrap"><table><thead><tr><th>Pivo</th><th>Hodnocení</th></tr></thead><tbody>${beers.map(beer => `<tr><td>${escapeHtml(beer.brand || 'Bez názvu')}</td><td>${diaryHasText(beer.rating) ? `${escapeHtml(beer.rating)} / 10` : '—'}</td></tr>`).join('')}</tbody></table></div>`;
+    }
+
+    return renderDiaryRegularAnswers(task, taskState);
+  }
+
+  function renderDiaryTask(task, taskState, photos) {
+    const status = taskState.status === 'completed'
+      ? '<span class="diary-status completed">✓ Splněno</span>'
+      : '<span class="diary-status">Rozepsáno</span>';
+    const badges = [
+      task.secret ? '<span class="diary-badge">🔒 tajná odpověď</span>' : '',
+      task.spicy ? `<span class="diary-badge spicy">${spiceText(task.spicy)}</span>` : ''
+    ].filter(Boolean).join('');
+    const answers = task.special
+      ? renderDiarySpecialAnswers(task, taskState)
+      : renderDiaryRegularAnswers(task, taskState);
+    const photoHtml = renderDiaryPhotos(task, photos);
+
+    return `
+      <article class="diary-task">
+        <header>
+          <div class="diary-task-icon">${task.icon}</div>
+          <div>
+            <div class="diary-task-title-row"><h3>${escapeHtml(task.title)}</h3>${badges}</div>
+            <p class="diary-place">📍 ${escapeHtml(task.place || 'Kdekoli cestou')}</p>
+          </div>
+          ${status}
+        </header>
+        <div class="diary-instructions">${task.instructions}</div>
+        ${answers ? `<div class="diary-answers">${answers}</div>` : ''}
+        ${photoHtml}
+      </article>
+    `;
+  }
+
+  function buildDiaryHtml(photos) {
+    const exportedAt = new Date();
+    const completedCount = tasks.filter(task => getTaskState(task.id).status === 'completed').length;
+    const sectionHtml = sections.map(section => {
+      const sectionTasks = tasks
+        .filter(task => task.section === section.id)
+        .filter(task => taskHasDiaryContent(task, getTaskState(task.id), photos));
+
+      const anniversaryHtml = section.id === 'day3' && state.anniversaryUnlocked
+        ? `<article class="diary-letter"><span>❤️ Speciální vzkaz od Pavla</span><h3>Pro Anetku</h3><p>${escapeHtml(ANNIVERSARY_MESSAGE)}</p></article>`
+        : '';
+
+      if (!sectionTasks.length && !anniversaryHtml) return '';
+      return `
+        <section class="diary-section">
+          <div class="diary-section-head">
+            <span>${section.icon}</span>
+            <div><small>${escapeHtml(section.kicker)}</small><h2>${escapeHtml(section.title)}</h2><p>${escapeHtml(section.description)}</p></div>
+          </div>
+          ${anniversaryHtml}
+          <div class="diary-task-list">${sectionTasks.map(task => renderDiaryTask(task, getTaskState(task.id), photos)).join('')}</div>
+        </section>
+      `;
+    }).filter(Boolean).join('');
+
+    return `<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cesta čtvrtého draka – vzpomínkový deníček</title>
+  <style>
+    :root { --wine:#701f3b; --wine-dark:#491326; --rose:#c94f72; --gold:#c89543; --ink:#30212a; --muted:#77636d; --paper:#fffdf9; --border:rgba(112,31,59,.16); }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; line-height:1.55; background:linear-gradient(180deg,#fff8f3,#fffdf9 45%,#f7ece7); }
+    main { width:min(100% - 28px,900px); margin:0 auto; padding:28px 0 70px; }
+    .diary-cover { position:relative; overflow:hidden; padding:38px 30px; border-radius:30px; color:#fffaf6; background:linear-gradient(135deg,var(--wine-dark),var(--wine) 58%,#9f3155); box-shadow:0 18px 44px rgba(73,19,38,.22); }
+    .diary-cover::after { content:"♥"; position:absolute; right:-10px; bottom:-68px; color:rgba(255,255,255,.08); font:190px Georgia,serif; transform:rotate(-12deg); }
+    .diary-cover small { position:relative; z-index:1; font-weight:800; letter-spacing:.09em; text-transform:uppercase; }
+    .diary-cover h1 { position:relative; z-index:1; margin:10px 0 8px; font:clamp(2.25rem,9vw,4.5rem)/.98 Georgia,serif; letter-spacing:-.04em; }
+    .diary-cover p { position:relative; z-index:1; margin:0; color:rgba(255,250,246,.86); }
+    .diary-summary { position:relative; z-index:1; display:inline-flex; margin-top:20px; padding:7px 11px; border:1px solid rgba(255,255,255,.22); border-radius:999px; background:rgba(255,255,255,.11); font-weight:800; }
+    .print-button { display:block; margin:16px 0 0 auto; padding:10px 14px; border:0; border-radius:12px; color:white; background:var(--wine); font-weight:800; cursor:pointer; }
+    .diary-section { margin-top:34px; }
+    .diary-section-head { display:flex; gap:13px; align-items:flex-start; margin-bottom:14px; }
+    .diary-section-head>span { font-size:2rem; }
+    .diary-section-head small { color:var(--rose); font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
+    .diary-section-head h2 { margin:2px 0 3px; font:2rem/1.05 Georgia,serif; }
+    .diary-section-head p { margin:0; color:var(--muted); }
+    .diary-task-list { display:grid; gap:14px; }
+    .diary-task { padding:18px; border:1px solid var(--border); border-radius:22px; background:rgba(255,253,249,.96); box-shadow:0 7px 20px rgba(73,19,38,.07); break-inside:avoid; }
+    .diary-task header { display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:12px; align-items:center; }
+    .diary-task-icon { display:grid; place-items:center; width:44px; height:44px; border-radius:14px; background:#f9dce5; font-size:1.3rem; }
+    .diary-task-title-row { display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+    .diary-task h3 { margin:0; font-size:1.08rem; }
+    .diary-place { margin:3px 0 0; color:var(--muted); font-size:.82rem; }
+    .diary-status,.diary-badge { display:inline-flex; padding:4px 8px; border-radius:999px; color:var(--wine); background:#f7ecd7; font-size:.72rem; font-weight:850; white-space:nowrap; }
+    .diary-status.completed { color:#246342; background:#e8f6ee; }
+    .diary-badge.spicy { color:#6f1d16; background:#ffe1d7; }
+    .diary-instructions { margin-top:14px; padding-top:13px; border-top:1px solid var(--border); color:#57434d; font-size:.9rem; }
+    .diary-instructions p { margin:0 0 8px; }
+    .diary-instructions ul { margin:7px 0; padding-left:20px; }
+    .diary-instructions blockquote { margin:10px 0; padding:9px 12px; border-left:4px solid var(--rose); background:#fff0f3; }
+    .diary-answers { display:grid; gap:9px; margin-top:13px; }
+    .diary-answer,.diary-rating,.diary-table-wrap { padding:12px; border-radius:14px; background:#fff5f7; }
+    .diary-answer strong { display:block; margin-bottom:3px; color:var(--wine-dark); font-size:.83rem; }
+    .diary-answer p { margin:0; white-space:pre-wrap; }
+    .diary-answer small { color:var(--muted); }
+    .diary-answer ul { margin:5px 0 0; padding-left:20px; }
+    .diary-rating { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .diary-rating div { display:flex; justify-content:space-between; gap:10px; padding:8px; border-radius:10px; background:white; }
+    table { width:100%; border-collapse:collapse; background:white; }
+    th,td { padding:8px; border-bottom:1px solid var(--border); text-align:left; }
+    .diary-photos { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:13px; }
+    .diary-photo { margin:0; padding:8px; border:1px solid var(--border); border-radius:15px; background:white; }
+    .diary-photo img { display:block; width:100%; max-height:500px; object-fit:contain; border-radius:10px; background:#f3e9e7; }
+    .diary-photo figcaption { margin-top:6px; color:var(--muted); font-size:.78rem; }
+    .diary-letter { margin:0 0 14px; padding:22px; border:1px solid rgba(201,79,114,.3); border-radius:22px; background:linear-gradient(145deg,#fff5f7,#fffdf9); box-shadow:0 7px 20px rgba(73,19,38,.07); }
+    .diary-letter span { color:var(--rose); font-weight:900; font-size:.78rem; text-transform:uppercase; letter-spacing:.06em; }
+    .diary-letter h3 { margin:5px 0; font:1.45rem Georgia,serif; }
+    .diary-letter p { margin:10px 0 0; padding:14px; border-left:4px solid var(--rose); border-radius:0 12px 12px 0; background:white; font:1.05rem Georgia,serif; white-space:pre-wrap; }
+    footer { margin-top:36px; padding-top:17px; border-top:1px solid var(--border); color:var(--muted); text-align:center; font-size:.8rem; }
+    @media (max-width:620px) { .diary-cover{padding:30px 22px}.diary-task header{grid-template-columns:auto 1fr}.diary-status{grid-column:1/-1;width:max-content}.diary-photos,.diary-rating{grid-template-columns:1fr} }
+    @media print { body{background:white}.no-print{display:none!important}main{width:100%;padding:0}.diary-cover{box-shadow:none}.diary-task,.diary-letter{box-shadow:none;break-inside:avoid} }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="diary-cover">
+      <small>Výroční vzpomínkový deníček</small>
+      <h1>Cesta čtvrtého draka 🐉</h1>
+      <p>Tři už máš. Čtvrtý na Tebe čekal v Krakově.</p>
+      <div class="diary-summary">${completedCount} splněných úkolů · export ${escapeHtml(exportedAt.toLocaleDateString('cs-CZ'))}</div>
+    </header>
+    <button class="print-button no-print" type="button" onclick="window.print()">🖨️ Vytisknout nebo uložit jako PDF</button>
+    ${sectionHtml || '<p style="margin-top:28px;color:#77636d">Zatím nejsou uložené žádné odpovědi ani fotografie.</p>'}
+    <footer>Soukromý deníček Anetky a Pavla · vytvořeno ${escapeHtml(exportedAt.toLocaleString('cs-CZ'))}</footer>
+  </main>
+</body>
+</html>`;
+  }
+
+  async function downloadDiary() {
+    const button = document.getElementById('downloadDiaryButton');
+    if (button) button.disabled = true;
+    showToast('Připravuji deníček včetně fotografií…');
+    try {
+      const photos = await collectPhotosAsDataUrls();
+      const html = buildDiaryHtml(photos);
+      downloadBlob(new Blob([html], { type: 'text/html;charset=utf-8' }), `cesta-ctvrteho-draka-denicek-${fileDateStamp()}.html`);
+      showToast('Deníček je připravený ke stažení.');
+    } catch (error) {
+      console.error(error);
+      showToast('Deníček se nepodařilo vytvořit. Zkus to znovu.');
+    } finally {
+      if (button) button.disabled = false;
+    }
+  }
+
+  async function downloadBackup() {
+    const button = document.getElementById('downloadBackupButton');
+    if (button) button.disabled = true;
+    showToast('Připravuji úplnou zálohu…');
+    try {
+      const payload = {
+        format: 'cesta-ctvrteho-draka-backup',
+        version: 1,
+        createdAt: new Date().toISOString(),
+        appKey: APP_KEY,
+        state: JSON.parse(JSON.stringify(state)),
+        photos: await collectPhotosAsDataUrls()
+      };
+      const json = JSON.stringify(payload);
+      downloadBlob(new Blob([json], { type: 'application/json;charset=utf-8' }), `cesta-ctvrteho-draka-zaloha-${fileDateStamp()}.json`);
+      showToast('Záloha je připravená ke stažení.');
+    } catch (error) {
+      console.error(error);
+      showToast('Zálohu se nepodařilo vytvořit. Zkus to znovu.');
+    } finally {
+      if (button) button.disabled = false;
+    }
+  }
+
+  function normalizeImportedState(importedState) {
+    if (!importedState || typeof importedState !== 'object' || Array.isArray(importedState)) {
+      throw new Error('Záloha neobsahuje platný stav hry.');
+    }
+
+    const normalized = {
+      ...JSON.parse(JSON.stringify(defaultState)),
+      ...importedState,
+      taskData: importedState.taskData && typeof importedState.taskData === 'object' ? importedState.taskData : {}
+    };
+    normalized.activeSection = sections.some(section => section.id === normalized.activeSection) ? normalized.activeSection : 'day1';
+    normalized.spicyUnlocked = Boolean(normalized.spicyUnlocked);
+    normalized.anniversaryUnlocked = Boolean(normalized.anniversaryUnlocked);
+    Object.values(normalized.taskData).forEach(item => {
+      if (!item || typeof item !== 'object') return;
+      if (item.status === 'skipped') item.status = '';
+      item.editing = false;
+    });
+    return normalized;
+  }
+
+  async function restoreBackupFile(file) {
+    const text = await file.text();
+    const payload = JSON.parse(text);
+    if (payload?.format !== 'cesta-ctvrteho-draka-backup' || payload.version !== 1) {
+      throw new Error('Tento soubor není platná záloha Cesty čtvrtého draka.');
+    }
+
+    const importedState = normalizeImportedState(payload.state);
+    const importedPhotos = payload.photos && typeof payload.photos === 'object' ? payload.photos : {};
+    const decodedPhotos = Object.entries(importedPhotos).map(([key, dataUrl]) => [key, dataUrlToBlob(dataUrl)]);
+    const yes = await askConfirm({
+      icon: '📥',
+      title: 'Obnovit uložený deníček?',
+      text: 'Současné odpovědi a fotografie v této aplikaci budou nahrazené obsahem zálohy.',
+      confirm: 'Ano, obnovit zálohu'
+    });
+    if (!yes) return false;
+
+    showToast('Obnovuji odpovědi a fotografie…');
+    await clearPhotos();
+    for (const [key, blob] of decodedPhotos) {
+      await putPhoto(key, blob);
+    }
+
+    state = importedState;
+    saveState();
+    for (const url of photoUrls.values()) URL.revokeObjectURL(url);
+    photoUrls.clear();
+    await render();
+    showToast('Záloha byla úspěšně obnovena.');
+    return true;
+  }
+
   async function compressImage(file) {
     const maxSide = 1600;
     let bitmap;
@@ -2628,6 +3059,22 @@
     if (wrap) wrap.classList.remove('has-photo');
     if (image) image.removeAttribute('src');
   }
+
+  document.getElementById('downloadDiaryButton').addEventListener('click', downloadDiary);
+  document.getElementById('downloadBackupButton').addEventListener('click', downloadBackup);
+  document.getElementById('restoreBackupInput').addEventListener('change', async event => {
+    const input = event.currentTarget;
+    const file = input.files?.[0];
+    if (!file) return;
+    try {
+      await restoreBackupFile(file);
+    } catch (error) {
+      console.error(error);
+      showToast(error instanceof SyntaxError ? 'Soubor se nepodařilo přečíst jako zálohu.' : (error.message || 'Zálohu se nepodařilo obnovit.'));
+    } finally {
+      input.value = '';
+    }
+  });
 
   document.getElementById('resetButton').addEventListener('click', async () => {
     const first = await askConfirm({ icon: '⚠️', title: 'Smazat celou hru?', text: 'Zmizí všechny texty, fotky, stav úkolů i tajné odpovědi. Tuto akci nejde vrátit.', confirm: 'Pokračovat' });
